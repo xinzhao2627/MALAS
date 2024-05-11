@@ -1,3 +1,56 @@
+.main-content {
+  font-family: "Segoe UI Variable Text", "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+  min-height: 100vh;
+  color: #323130;
+}
+.logo {
+  object-fit: cover;
+}
+
+
+.ms-01t {
+  font-size: 80px;
+  font-weight: 600;
+  color: rgb(50, 49, 48);
+  display: block;
+  line-height: 1.2;
+  width: 50%;
+  letter-spacing: -1px;
+}
+.ms-01{
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  margin-top: 5%;
+}
+.ms-01s{
+  font-weight: 400;
+  font-size: 24px;
+  display: contents;
+}
+.ms-01s span{
+  margin-top: 5px;
+}
+
+.content-2 {
+  height: 25vw;
+}
+.img-c2 {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: 100% 20;
+}
+.ms-02 {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+
+
 .App {
   text-align: center;
   font-family: "Segoe UI Webfont", "Helvetica Neue", "Lucida Grande", "Roboto", "Ebrima", "Nirmala UI", "Gadugi", "Segoe Xbox Symbol", "Segoe UI Symbol", "Meiryo UI", "Khmer UI", "Tunga", "Lao UI", "Raavi", "Iskoola Pota", "Latha", "Leelawadee", "Microsoft YaHei UI", "Microsoft JhengHei UI", "Malgun Gothic", "Estrangelo Edessa", "Microsoft Himalaya", "Microsoft New Tai Lue", "Microsoft PhagsPa", "Microsoft Tai Le", "Microsoft Yi Baiti", "Mongolian Baiti", "MV Boli", "Myanmar Text", "Cambria Math";
@@ -10,11 +63,4 @@
   align-items: center;
   justify-content: center;
   color: black;
-}
-body {
-  background-image: 
-    radial-gradient(farthest-side at top left, #e9d7d0, transparent),
-    radial-gradient(farthest-side at top right, #d4e1d2, transparent),
-    radial-gradient(farthest-side at bottom left, #dde5eb, transparent),
-    radial-gradient(farthest-side at bottom right, #ebe8d7, transparent);
 }
