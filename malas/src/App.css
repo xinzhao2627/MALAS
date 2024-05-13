@@ -3,6 +3,15 @@
   min-height: 100vh;
   color: #323130;
 }
+.main-title-b1 {
+  background-color: #006fc9;
+  font-weight: "600";
+  transition: all 0.3s ease-in-out;
+}
+
+.main-title-b1:hover {
+  background-color: #014A85;
+}
 .logo {
   object-fit: cover;
 }
@@ -57,10 +66,91 @@
   font-weight: 400;
 }
 .App-header {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   color: black;
+}
+.login-box {
+  background-color: white;
+  border: 1px solid #d8d9d5;
+  width: 440px;
+  height: 355px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 1px 5px;
+}
+.login-header-logo {
+  margin-top: 5vh;
+
+  text-align: left;
+  width: 100%;
+}
+.login-header-label {
+  font-size: 23px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+.login-header-input {
+  border: none;
+  border-bottom: 1px solid #9f9f9f;
+  width: 100%;
+  font-family: 'Segoe UI';
+  font-weight: 400;
+  font-size: 15px;
+  transition: 0.3s border ease-in-out;
+}
+.login-header-input:focus{
+  outline: none;
+  border-bottom: 1.5px solid #02a4ef;
+}
+.login-header-input:placeholder-shown {
+  opacity: 0.7;
+}
+.login-reg-prompt {
+  font-size: 13px;
+}
+.login-reg-prompt a {
+  text-decoration: none;
+}
+
+.login-pbtn {
+  text-align: right;
+  width: 100%;
+  font-family: "Segoe UI";
+  font-size: 15px;
+  font-weight: 400;
+
+}
+.login-pbtn button {
+  padding: 5px;
+  border: none;
+  letter-spacing: 0.2px;
+  width: 30%;
+  transition: 0.2s all ease-in-out;
+}
+.pbtn-1 {
+  background-color: #cccccc;
+  color: black;
+}
+.pbtn-2 {
+  background-color: #0067b8;
+  color: white;
+}
+.pbtn-1:hover {
+  background-color: #B7B7B7;
+}
+.pbtn-2:hover {
+  background-color: #004E8B;
+}
+.pbtn-1:active, .pbtn-2:active {
+  transform: scale(0.97);
+}
+
+.login-section {
+  min-height: 100vh;
+  background-image: 
+    radial-gradient(farthest-side at top left, #e9d7d0, transparent),
+    radial-gradient(farthest-side at top right, #d4e1d2, transparent),
+    radial-gradient(farthest-side at bottom left, #dde5eb, transparent), 
+    radial-gradient(farthest-side at bottom right, #ebe8d7, transparent);
 }
