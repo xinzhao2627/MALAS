@@ -23,6 +23,10 @@ function Login (){
         set_password(e.target.value)
         console.log(password)
       }
+      const backSubmit = (e) => {
+        
+      }
+
       const nextSubmit = async (e) => {
         e.preventDefault()
         const ex = {user_name}
@@ -79,7 +83,7 @@ function Login (){
               }
 
               <div className='mt-4 login-pbtn'>
-                  <button className='pbtn-1' name='Back'>Back</button>
+                  <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
                   <button className='ms-3 pbtn-2' name='Next' onClick={nextSubmit}>Next</button>
               </div>
             </div>
