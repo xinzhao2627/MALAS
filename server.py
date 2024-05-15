@@ -5,7 +5,7 @@ app = Flask(__name__)
 def hello():
     # turn a data into dictionary [example]
     users = {
-        "users": ["Baltar - Pythonxxxxx", "Hipolito", "Montaniel"]
+        "users": ["Baltar - Pythonxxxxx", "Hipolito Carl", "Montaniel"]
     }
     
     # turn into json and send it to frontend
