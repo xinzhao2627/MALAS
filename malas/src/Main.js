@@ -19,14 +19,14 @@ export default class MainHome extends Component {
       <div className = 'main-content'>
         <nav className="navbar navbar-expand-lg bg-light navbar-fixed-top border-bottom">
           <div className="ms-3  container-fluid" style={{fontWeight:"600"}}>
-            <a className="navbar-brand logo mb-1" href=""> <img src='/images/microsoft-seeklogo.jpg'  width="120px" height="25px"/> </a>
+            <a className="navbar-brand logo mb-1" href="/#"> <img src='/images/microsoft-seeklogo.jpg'  alt='Microsoft_logo' width="120px" height="25px"/> </a>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
               <span className="navbar-toggler-icon"></span>
             </button>
             <div className="collapse navbar-collapse me-2" id="navbarNavAltMarkup">
               <ul className='navbar-nav me-auto mb-2 mb-lg-0'>
                 <li>
-                  <a className="nav-link" href="" >Home</a>
+                  <a className="nav-link" href="/#" >Home</a>
                 </li>
                 <li>
                   <button className="nav-link"onClick={this.goAbout}>About</button>
