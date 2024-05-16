@@ -55,7 +55,11 @@ function Login (){
               
               {(prompt_username) 
                 ? <h3 className='login-header-label mt-3'> Sign in</h3>
-                : user_name
+                : <>
+                  {user_name}
+                  <h3 className='login-header-label mt-3'> Sign in</h3>
+                  <span>We'll send a code to {user_name} to sign you in.</span>
+                </>
               }
 
               {(prompt_username)
@@ -78,7 +82,7 @@ function Login (){
                     </div>
                   </>
                 : <>
-                
+
                   </>
               }
 
