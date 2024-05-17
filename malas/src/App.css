@@ -155,3 +155,116 @@
     radial-gradient(farthest-side at bottom left, #dde5eb, transparent), 
     radial-gradient(farthest-side at bottom right, #ebe8d7, transparent);
 }
+
+.grey-prompt {
+  text-align: justify;
+  background-color: #e5e5e5;
+  padding: 1%;
+  border: 1px solid #d3d3d3;
+  
+}
+
+.grey-prompt p {
+  font-size: 13px;
+}
+
+.grey-prompt label {
+  font-size: 17px;
+}
+
+/* CSS */
+.button-59 {
+  align-items: center;
+  background-color: #fff;
+  border: 2px solid #000;
+  box-sizing: border-box;
+  color: #000;
+  cursor: pointer;
+  fill: #000;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+  justify-content: center;
+  letter-spacing: -.8px;
+  line-height: 24px;
+  min-width: 140px;
+  outline: 0;
+  padding: 0 17px;
+  text-align: center;
+  text-decoration: none;
+  transition: all .3s ease-in-out;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+.button-59 label {
+  margin-top: 5px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.button-59:focus {
+  color: #171e29;
+}
+
+.button-59:hover {
+  border-color: #0067b8;
+  color: #0067b8;
+  fill: #0067b8;
+}
+
+.button-59:active {
+  transform: scale(0.97);
+  border-color: #0067b8;
+  color: #0067b8;
+  fill: #0067b8;
+}
+
+@media (min-width: 768px) {
+  .button-59 {
+    min-width: 170px;
+  }
+}
+.yellow-59 {
+  align-items: center;
+  background-color: #fff;
+  border: 2px solid #000;
+  box-sizing: border-box;
+  color: #000;
+  cursor: pointer;
+  fill: #000;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+  justify-content: center;
+  letter-spacing: -.8px;
+  line-height: 24px;
+  min-width: 140px;
+  outline: 0;
+  padding: 0 17px;
+  text-align: center;
+  text-decoration: none;
+  transition: all .3s ease-in-out;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+.yellow-59 label {
+  margin-top: 5px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+
+.yellow-59:focus {
+  color: #171e29;
+}
+.yellow-59:hover {
+  border-color: #80bb01;
+  color: #80bb01;
+  fill: #80bb01;
+} 
+.yellow-59:active {
+  transform: scale(0.97);
+  border-color: #80bb01;
+  color: #80bb01;
+  fill: #80bb01;
+}
