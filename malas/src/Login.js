@@ -117,7 +117,7 @@ const infoSubmit = async (e) => {
           
           { prompt_phase === 1
             ? <>
-                <h3 className='login-header-label mt-3'> Sign innn</h3>
+                <h3 className='login-header-label mt-3'> Sign in</h3>
                 <input className='login-header-input mt-3' type='email' placeholder='Email or phone' onChange={handleChangeUser}/>
                 <div className='login-reg-prompt mt-2'>
                   <label>No account?</label>
