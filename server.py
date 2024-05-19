@@ -1,11 +1,18 @@
 from flask import Flask, jsonify, request, session, redirect
+from database import Query_pr, Query
 app = Flask(__name__)
 
 @app.route("/users", methods=['GET'])
 def hello():
     # turn a data into dictionary [example]
+    user_data = Query("SELECT * FROM user_test")
+    us_data = []
+    for us in user_data:
+        us_data.append(us[0])
+        
+    
     users = {
-        "users": ["Baltar - Pythonxxxxx", "Hipolito Carl", "Montaniel"]
+        "users": us_data
     }
     
     # turn into json and send it to frontend
@@ -17,15 +24,8 @@ def received():
     data = request.json 
     
     # FOR USER NAME/EMAIL/BINDED ACCOUNT
-    user_name = data.get('user_name')
-    
-    # FOR PASSWORD
-    # password = data.get('password')
-    
-    
-    # TODO verify the user name
-
-    # TODO verify the password
+    user_name = data.get('user_name') # variable name sa data.get ako magasasabi
+    Query_pr("INSERT INTO user_test(userName, numberName) VALUES(%s, %s)", (user_name, 20))
     
     
     # return the username into the frontend after verification

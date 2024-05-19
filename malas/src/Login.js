@@ -9,7 +9,7 @@ function Login (){
   const [fetched_data, set_fetched_data] = useState()
   const [user_name, set_user_name] = useState()
   const [password, set_password] = useState()
-  const [prompt_phase, set_prompt_phase] = useState(2.5)
+  const [prompt_phase, set_prompt_phase] = useState(1)
   const [forgot_prompt, set_forgot_prompt] = useState(true)
   const retrieved_user = "testing@gmail.com"
   useEffect(() => {
@@ -77,12 +77,12 @@ const infoSubmit = async (e) => {
       const mes = await response.json()
       alert(mes.message)
     }
-    set_prompt_phase(2)
+    set_prompt_phase(1)
   }
   const passwordSubmit = async (e) => {
     e.preventDefault()
     const ps = {password}
-    const option
+
 
     set_prompt_phase(2.5)
   }

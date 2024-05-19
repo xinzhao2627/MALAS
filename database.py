@@ -18,8 +18,44 @@ def insert_data_to_user(user_id, username, user_password, f_name, l_name, user_c
     cnx.commit()
     cursor.close()
 
+def select_users():
+    cursor = cnx.cursor()
+    query = "SELECT * FROM user_test"
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    cnx.commit()
+    cursor.close()
+    return rows
+
+# TEST USER_TEST
+def insertUser(user, number):
+    print(user, " HAHAHAHAHAHAHA")
+    cursor = cnx.cursor()
+    query = "INSERT INTO user_test(userName, numberName) VALUES (%s, %s)"
+    cursor.execute(query, (user, number))
+    cnx.commit()
+    cursor.close()
 
 #READ METHODS
+
+# with paramaters
+def Query_pr(query, parameters=()):
+    cur = cnx.cursor()
+    cur.execute(query, parameters)
+    rows = cur.fetchall()
+    cnx.commit()
+    cur.close()
+    return rows
+
+
+# query without needing parameters
+def Query(query):
+    cur = cnx.cursor()
+    cur.execute(query)
+    rows = cur.fetchall()
+    cnx.commit()
+    cur.close()
+    return rows
 
 
 #UPDATE METHODS
@@ -30,6 +66,7 @@ def insert_data_to_user(user_id, username, user_password, f_name, l_name, user_c
 
 #EXECUTE/CALL METHODS
 
-insert_data_to_user(150003001, "Username1", "password1", "Carl", "Hipolito" ,"09123456789", "sample1@domain.com", "2003-09-14", "Philippines")
-insert_data_to_user(150003002, "Username2", "password2", "Neil", "Baltar" ,"09123456788", "sample2@domain.com", "2003-01-01", "Philippines")
-insert_data_to_user(150003003, "Username3", "password3", "Rainnand", "Montaniel" ,"09123456787", "sample3@domain.com", "2003-01-02", "Philippines")
+# insert_data_to_user(150003001, "Username1", "password1", "Carl", "Hipolito" ,"09123456789", "sample1@domain.com", "2003-09-14", "Philippines")
+# insert_data_to_user(150003002, "Username2", "password2", "Neil", "Baltar" ,"09123456788", "sample2@domain.com", "2003-01-01", "Philippines")
+# insert_data_to_user(150003003, "Username3", "password3", "Rainnand", "Montaniel" ,"09123456787", "sample3@domain.com", "2003-01-02", "Philippines")
+
