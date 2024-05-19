@@ -196,7 +196,7 @@ const infoSubmit = async (e) => {
                     : prompt_phase === 4
                       ? <>
                         <span>{user_name}</span>
-                        <h3 className='login-header-label mt-3'>CCD</h3>
+                        <h3 className='login-header-label mt-3'>CCD (changed)</h3>
                         <span>We emailed the code to {user_name}. Please enter the code to sign-in</span>
                         <div className='login-reg-prompt mt-3'>
                           <button className='link-primary'>
