@@ -78,6 +78,7 @@
   width: 440px;
   height: 355px;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 1px 5px;
+  transition: 0.3s all ease-in-out;
 }
 .login-header-logo {
   margin-top: 5vh;
@@ -176,11 +177,11 @@
 .button-59 {
   align-items: center;
   background-color: #fff;
-  border: 2px solid #000;
+  border: 2px solid #1e1e1e;
   box-sizing: border-box;
-  color: #000;
+  color: #1e1e1e;
   cursor: pointer;
-  fill: #000;
+  fill: #1e1e1e;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 16px;
   justify-content: center;
@@ -195,11 +196,17 @@
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+  z-index: 2;
 }
-.button-59 label {
+.button-59 span {
   margin-top: 5px;
   font-size: 20px;
   font-weight: 600;
+  pointer-events: none;
+}
+
+.button-59 p {
+  pointer-events: none;
 }
 
 .button-59:focus {
@@ -219,6 +226,8 @@
   fill: #0067b8;
 }
 
+
+
 @media (min-width: 768px) {
   .button-59 {
     min-width: 170px;
@@ -227,11 +236,11 @@
 .yellow-59 {
   align-items: center;
   background-color: #fff;
-  border: 2px solid #000;
+  border: 2px solid #1e1e1e;
   box-sizing: border-box;
-  color: #000;
+  color: #1e1e1e;
   cursor: pointer;
-  fill: #000;
+  fill: #1e1e1e;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 16px;
   justify-content: center;
@@ -247,13 +256,17 @@
   -webkit-user-select: none;
   touch-action: manipulation;
 }
-.yellow-59 label {
+.yellow-59 span {
   margin-top: 5px;
   font-size: 20px;
   font-weight: 600;
+  pointer-events: none;
 }
 
 
+.yellow-59 p {
+  pointer-events: none;
+}
 .yellow-59:focus {
   color: #171e29;
 }

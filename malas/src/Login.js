@@ -31,6 +31,36 @@ function Login (){
     set_prompt_phase(1)
   }
 
+const infoSubmit = async (e) => {
+  e.preventDefault()
+
+  // TODO CONDITION PHASE
+  const info = null
+
+  const option = {
+    method: "POST",
+    headers: {
+      "Content-Type" : "application/json"
+    },
+    body: JSON.stringify(info)
+  }
+
+
+  // TODO CONDITION
+  const postURL = null
+  const response = await fetch(postURL, option)
+  if (!(response.status === 201 || response.status === 200)){
+    const backend_fetch = await response.json()
+    alert(backend_fetch.message)
+  }
+
+  // TODO CONDITION 
+   const nextPhase = null
+
+   set_prompt_phase(nextPhase)
+}
+
+
   const nextSubmit = async (e) => {
     e.preventDefault()
     const ex = {user_name}
@@ -39,7 +69,8 @@ function Login (){
       headers: {
         "Content-Type":"application/json"
       },
-      body: JSON.stringify(ex)
+      body: JSON.stringify(ex),
+      prompt_phase: prompt_phase
     }
     const response = await fetch("/received", option)
     if (response.status === 201 || response.status === 200){
@@ -48,8 +79,12 @@ function Login (){
     }
     set_prompt_phase(2)
   }
-  const passwordSubmit = () => {
+  const passwordSubmit = async (e) => {
+    e.preventDefault()
+    const ps = {password}
+    const option
 
+    set_prompt_phase(2.5)
   }
 
   const otpSubmit = (e) => {
@@ -60,6 +95,10 @@ function Login (){
   }
   const forgotSubmit = () => {
 
+  }
+  const auth_button = (e) => {
+    if (e.target.id === 'OTP') set_prompt_phase(3);
+    else if (e.target.id === 'CCD') set_prompt_phase(4);
   }
 // Prompt phase 1 = username
 // phase 2 = password
@@ -101,7 +140,6 @@ function Login (){
                   <div className='mt-4'>
                     <span >{retrieved_user}</span>
                   </div>
-
                   <h3 className='login-header-label mt-3'> Enter password</h3>
                   <input className='login-header-input mt-3' type='password' placeholder='Password' onChange={handleChangePassword}/>
                   <div className='login-reg-prompt mt-3'>
@@ -117,12 +155,12 @@ function Login (){
               : prompt_phase === 2.5
                 ? <>
                   <h3 className='login-header-label mt-3'> Choose authentication</h3>
-                  <div className='button-59 mt-4'>
-                    <label>Color code detection</label>
-                    <p>Choose colors that were assigned upon user registration</p>
+                  <div className='button-59 mt-4' id='CCD' onClick={auth_button}>
+                      <span>Color code detection</span>
+                      <p>Choose colors that were assigned upon user registration</p>
                   </div>
-                  <div className='button-59 mt-3 yellow-59'>
-                    <label>One-time password (OTP)</label>
+                  <div className='button-59 mt-3 yellow-59' id='OTP' onClick={auth_button}>
+                    <span>One-time password (OTP)</span>
                     <p>Send a security code on your linked account</p>
                   </div>
                   <div className='mt-4 login-pbtn' style={{textAlign:"center"}}>
