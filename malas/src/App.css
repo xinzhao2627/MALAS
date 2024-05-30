@@ -76,7 +76,7 @@
   background-color: white;
   border: 1px solid #d8d9d5;
   width: 440px;
-  height: 355px;
+  height: 100%;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 1px 5px;
   transition: 0.3s all ease-in-out;
 }
@@ -280,4 +280,53 @@
   border-color: #80bb01;
   color: #80bb01;
   fill: #80bb01;
+}
+
+
+.w-dd{
+  display: inline-flex;
+  width: 100%;
+}
+.dd{
+  font-family: 'Segoe UI';
+  opacity: 0.9;
+  padding: 2%;
+  border-width: 0px 0px 1px 0px;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  width: 20em;
+  border-radius: .25em;
+  overflow: hidden;
+}
+.small-copyright {
+  font-size: 12px;
+}
+.checkbox {
+  transform: scale(1.2);
+}
+
+.captcha-box{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.reg-info{
+  margin-top: 4%;
+}
+
+.reg-info strong {
+  display: block;
+  width: 100%;
+  font-size: 16px;
+}
+.reg-info small{
+  display: block;
+  width: 100%;
+  font-size: 14px;
+}
+.img-center {
+  text-align: center;
+  width: 100%;
 }
