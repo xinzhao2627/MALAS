@@ -2,6 +2,8 @@ import smtplib
 import pyotp
 import time
 
+
+
 #OTP generator
 key = "Oursupersecretkeythatnooneexceptourmembersshouldknow"
 totp = pyotp.TOTP(key) # This will generate unique code every 30 seconds

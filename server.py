@@ -33,6 +33,39 @@ def received():
         "message": f"I came from python, the username you sent is: {user_name}",
         "proceed": True
         }),201 # 201 for success request
+    
+@app.route('/regVerifyEmail', methods = ['POST'])
+def regVerifyEmail():
+    # use request.json to get data from frontend
+    data = request.json 
+    target_email = data.get('user_name')
+    
+    # dict content
+    email_in_DB = False
+    message = ''
+    proceed = False
+    stat = 400
+    passCode = None
+    
+    # TODO: check FIRST if target_email is in the database, target email must be new in order to proceed
+    # email_in_DB = check if email is in the database
+    #### --- ####
+    
+    if (email_in_DB):
+        message = 'The email already exist'
+        proceed = False
+        stat = 400
+    else:
+        message = ''
+        proceed = True
+        stat = 200
+        # passCode = deliverOTP(target_email)
+    
+    return jsonify({
+        "message": message,
+        "proceed": proceed,
+        "passCode": passCode
+    }), stat
 
 if __name__ == "__main__":
     app.run(debug=True)
