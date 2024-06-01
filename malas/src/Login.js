@@ -1,6 +1,6 @@
 import './App.css';
 import React, {useState, useEffect, useRef } from 'react'
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import SliderCaptcha from 'rc-slider-captcha'
@@ -8,12 +8,15 @@ import createPuzzle, { Result }  from 'create-puzzle'
 
 
 function Login (){
-  const [fetched_data, set_fetched_data] = useState()
-  const [user_name, set_user_name] = useState()
-  const [password, set_password] = useState()
+  const navigate = useNavigate();
+  const [fetched_data, set_fetched_data] = useState('')
+  const [user_name, set_user_name] = useState('')
+  const [password, set_password] = useState('')
   const [prompt_phase, set_prompt_phase] = useState(1)
   const [forgot_prompt, set_forgot_prompt] = useState(true)
   const [captchaAttempt, s_captchaAttempt] = useState(0)
+  const [retrieved_OTP, s_retrieved_OTP] = useState(0)
+  const [f_OTP, s_f_OTP] = useState(0)
   const retrieved_user = "testing@gmail.com"
   const pics = ['/images/captchaP/mooP.jpg', '/images/captchaP/iniP.jpg', '/images/captchaP/picP.jpg']
   const getPic = () => {return pics[Math.floor(Math.random() * pics.length)]}
@@ -33,39 +36,15 @@ function Login (){
   const handleChangePassword = (e) => {set_password(e.target.value)}
   const backSubmit = (e) => {window.location.reload()}
   const forgotSubmit = () => {}
-  const otpSubmit = () => {}
-  const sendOTP = () => {set_prompt_phase(3.5)}
-  const passwordSubmit = (e) => {set_prompt_phase(2.1)}
-  const infoSubmit = async (e) => {
-    e.preventDefault()
-
-    // TODO CONDITION PHASE
-    const info = null
-
-    const option = {
-      method: "POST",
-      headers: {
-        "Content-Type" : "application/json"
-      },
-      body: JSON.stringify(info)
-    }
+// Prompt phase 1 = username
+// phase 2 = password
+// phase 2.5 = choose authentication
+// phase 3 = pyOTP (login)
+// phase 3.5 = pyOTP code sent (verify)
+// phase 4 = CCD (login)
 
 
-    // TODO CONDITION
-    const postURL = null
-    const response = await fetch(postURL, option)
-    if (!(response.status === 201 || response.status === 200)){
-      const backend_fetch = await response.json()
-      alert(backend_fetch.message)
-    }
-
-    // TODO CONDITION 
-    const nextPhase = null
-
-    set_prompt_phase(nextPhase)
-  }
-
-  const nextSubmit = async (e) => {
+  const accSubmit = async (e) => {
     e.preventDefault()
     const ex = {user_name}
     const option  = {
@@ -84,17 +63,6 @@ function Login (){
     set_prompt_phase(2)
   }
 
-  const auth_button = (e) => {
-    if (e.target.id === 'OTP') set_prompt_phase(3);
-    else if (e.target.id === 'CCD') set_prompt_phase(4);
-  }
-// Prompt phase 1 = username
-// phase 2 = password
-// phase 2.5 = choose authentication
-// phase 3 = pyOTP (login)
-// phase 3.5 = pyOTP code sent (verify)
-// phase 4 = CCD (login)
-
   const enter_account = (
     <>
       <h3 className='login-header-label mt-3'> Sign in</h3>
@@ -112,10 +80,31 @@ function Login (){
       </div>
       <div className='mt-4 login-pbtn'>
         <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
-        <button className='ms-3 pbtn-2' name='Next' onClick={nextSubmit}>Next</button>
+        <button className='ms-3 pbtn-2' name='Next' onClick={accSubmit}>Next</button>
       </div>
     </>
   )
+
+
+  const passwordSubmit = async (e) => {
+    // e.preventDefault()
+    // const ex = {password}
+    // const option  = {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type":"application/json"
+    //   },
+    //   body: JSON.stringify(ex),
+    //   prompt_phase: prompt_phase
+    // }
+    // const response = await fetch("/received", option)
+    // if (response.status === 201 || response.status === 200){
+    //   const mes = await response.json()
+    //   alert(mes.message)
+    // }
+
+    set_prompt_phase(2.1)
+  }
   const enter_password = (
     <>
       <div className='mt-4'>
@@ -134,6 +123,12 @@ function Login (){
       </div>
     </>
   )
+
+  const auth_button = (e) => {
+    if (e.target.id === 'OTP') set_prompt_phase(3);
+    else if (e.target.id === 'CCD') set_prompt_phase(4);
+  }
+
   const enter_auth = (
     <>
       <h3 className='login-header-label mt-3'> Choose authentication</h3>
@@ -150,6 +145,30 @@ function Login (){
       </div>
     </>
   )
+  const sendOTP = async (e) => {
+    // e.preventDefault()
+    // const ex = {user_name}
+    // const option  = {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type":"application/json"
+    //   },
+    //   body: JSON.stringify(ex),
+    //   prompt_phase: prompt_phase
+    // }
+    // const response = await fetch("/received", option)
+    // if (response.status === 201 || response.status === 200){
+    //   const data = await response.json()
+    //   alert(data.message)
+    //   set_prompt_phase(3.5)
+
+      
+    // } else {
+    //   alert('error on sending otp!, otp not sent to user email')
+    //   backSubmit()
+    // }
+    set_prompt_phase(3.5)
+  }
   const show_otp = (
     <>
       <span>{user_name}</span>
@@ -166,12 +185,25 @@ function Login (){
       </div>
     </>
   )
+  const handleOTPChange = (e) => {
+    s_f_OTP(e.target.value)
+  }
+  const otpSubmit = () => {
+    // TODO: upload transaction true or false 
+
+    // if (f_OTP === retrieved_OTP){
+    //   navigate('/')
+    // } else {
+    //   alert('incorrect OTP')
+    // }
+    navigate('/')
+  }
   const enter_otp = (
     <>
       <span>{user_name}</span>
       <h3 className='login-header-label mt-3'> Enter code</h3>
       <span>We emailed the code to {user_name}. Please enter the code to sign-in</span>
-      <input className='login-header-input mt-3' type='number'/>
+      <input className='login-header-input mt-3' type='number' value={f_OTP} onChange={handleOTPChange}/>
       <div className='mt-4 login-pbtn'>
         <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
         <button className='ms-3 pbtn-2' name='Next' onClick={otpSubmit}>Sign in</button>
@@ -203,36 +235,37 @@ function Login (){
        
               <SliderCaptcha
                   request={() =>
-                      
-                      createPuzzle(getPic(), {
-                      format: 'blob'
-                      }).then((res) => {
-                          offsetXRef.current = res.x;
+                    createPuzzle(getPic(), {
+                    format: 'blob'
+                    }).then((res) => {
+                        offsetXRef.current = res.x;
 
-                          return {
-                              bgUrl: res.bgUrl,
-                              puzzleUrl: res.puzzleUrl
-                          };
-                      })
+                        return {
+                            bgUrl: res.bgUrl,
+                            puzzleUrl: res.puzzleUrl
+                        };
+                    })
                   }
                   onVerify={(data) => {
-                      
-                      console.log(data.x + ' x and currnet+5: ' + (offsetXRef.current+10) + 'and -5: ' + (offsetXRef.current-10));
-                      if (data.x >= offsetXRef.current - 10 && data.x < offsetXRef.current + 10) {
-                          set_prompt_phase(2.5)
-                          return Promise.resolve();
-                      }
-                      s_captchaAttempt(prev => {
-                          const attempt = prev + 1
-                          if (attempt >= 3) {
-                              window.location.reload()
-                              return 0
-                          }
+                    if (data.x >= offsetXRef.current - 10 && data.x < offsetXRef.current + 10) {
+                      setTimeout(() => {
+                        set_prompt_phase(2.5);
+                      }, 1000);
+                      return Promise.resolve();
+                    }
 
-                          return attempt
-                      });
-                      
-                      return Promise.reject();
+                    s_captchaAttempt(prev => {
+                      const attempt = prev + 1
+                      if (attempt >= 3) {
+                          backSubmit()
+                          // TODO await upload transaction 
+                          return 0
+                      }
+
+                      return attempt
+                    });
+                    
+                    return Promise.reject();
                   }}
                   bgSize={{
                       width: 360

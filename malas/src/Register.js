@@ -30,32 +30,41 @@ function Register () {
     const getPic = () => {return pics[Math.floor(Math.random() * pics.length)]}
     const backSubmit = (e) => {window.location.reload()}
 
-    const verifyNewPassword = () => {
-        let passPoints = 0
-        
-        if (!(/^[A-Z]*$/.test(f_ps))) passPoints += 1;
-        if (!(/^[a-z]*$/.test(f_ps))) passPoints += 1;
-        if (format.test(f_ps)) passPoints += 1;
 
-        if (f_ps.includes(f_email) || f_ps.length < 8 || passPoints < 2){
-            alert('Wrong!')
-        } else {
-            s_reg_phase(3)
-        }
-    }
     const handleChangePassword = (ps) => {s_f_ps(ps.target.value)}
     const handleChangeEmail = (em) => {s_f_email(em.target.value)}
     const handleOtpChange = (e) => {s_f_otp(e.target.value)}
     const handleChangeFN = (f) => {s_f_fn(f.target.value)}
     const handleChangeLN = (l) => {s_f_ln(l.target.value)}
-    
     const showPassword = () => {setPasswordVisibility(!passwordVisibility)}
 
-    const verifyNewEmail = () => {
+    const verifyNewEmail = async (e) => {
+        // TODO: upload transaction
+
         if (regex.test(f_email)){
             alert("Email has special")
+
         } else {
+            // e.preventDefault()
+            // const ex = {f_email}
+            // const option  = {
+            //   method: "POST",
+            //   headers: {
+            //     "Content-Type":"application/json"
+            //   },
+            //   body: JSON.stringify(ex),
+            //   reg_phase: reg_phase
+            // }
+            // const response = await fetch("/regVerifyEmail", option)
+            // if (response.status === 201 || response.status === 200){
+            //   const data = await response.json()
+            //   alert(data.message)
+            //   s_reg_phase(2)
+
             
+            // } else {
+            //   alert('This email cannot be used')
+            // }
             s_reg_phase(2)
         }
         
@@ -82,6 +91,40 @@ function Register () {
         </>
     )
 
+    const verifyNewPassword = async (e) => {
+        let passPoints = 0
+        
+        if (!(/^[A-Z]*$/.test(f_ps))) passPoints += 1;
+        if (!(/^[a-z]*$/.test(f_ps))) passPoints += 1;
+        if (format.test(f_ps)) passPoints += 1;
+
+        if (f_ps.includes(f_email) || f_ps.length < 8 || passPoints < 2){
+            alert('Wrong!')
+        } else {
+            // e.preventDefault()
+            // const ex = {f_ps}
+            // const option  = {
+            //   method: "POST",
+            //   headers: {
+            //     "Content-Type":"application/json"
+            //   },
+            //   body: JSON.stringify(ex),
+            //   reg_phase: reg_phase
+            // }
+            // const response = await fetch("/regVerifyPassword", option)
+            // if (response.status === 201 || response.status === 200){
+            //   const data = await response.json()
+            //   alert(data.message)
+            //   s_reg_phase(3)
+
+            
+            // } else {
+            //   alert('error on sending otp!, otp not sent to user email')
+            //   backSubmit()
+            // }
+            s_reg_phase(3)
+        }
+    }
     const create_password = (
         <>  
             <div className='mt-3'>
@@ -197,6 +240,7 @@ function Register () {
                             const attempt = prev + 1
                             if (attempt >= 3) {
                                 window.location.reload()
+                                // TODO: upload transaction iff true
                                 return 0
                             }
 
@@ -313,7 +357,7 @@ function Register () {
                         : reg_phase === 6
                             ? after_info
                             : null
-                )}
+                    )}
                 </div>
             </div>
         </div>
