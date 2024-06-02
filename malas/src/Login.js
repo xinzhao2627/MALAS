@@ -35,7 +35,7 @@ function Login (){
   const handleChangeUser = (e) => {set_user_name(e.target.value)}
   const handleChangePassword = (e) => {set_password(e.target.value)}
   const backSubmit = (e) => {window.location.reload()}
-  const forgotSubmit = () => {}
+  
 // Prompt phase 1 = username
 // phase 2 = password
 // phase 2.5 = choose authentication
@@ -66,7 +66,7 @@ function Login (){
   const enter_account = (
     <>
       <h3 className='login-header-label mt-3'> Sign in</h3>
-      <input className='login-header-input mt-3' type='email' placeholder='Email or phone' onChange={handleChangeUser}/>
+      <input className='login-header-input mt-3' type='email' placeholder='Email or phone' onChange={handleChangeUser} value={user_name}/>
       <div className='login-reg-prompt mt-2'>
         <label>No account?</label>
         <NavLink to='/register' className='ms-1 link-primary'>
@@ -105,13 +105,16 @@ function Login (){
 
     set_prompt_phase(2.1)
   }
+  const forgotSubmit = () => {
+    navigate('/resetPass')
+  }
   const enter_password = (
     <>
       <div className='mt-4'>
         <span >{retrieved_user}</span>
       </div>
       <h3 className='login-header-label mt-3'> Enter password</h3>
-      <input className='login-header-input mt-3' type='password' placeholder='Password' onChange={handleChangePassword}/>
+      <input className='login-header-input mt-3' type='password' placeholder='Password' value={password}  onChange={handleChangePassword}/>
       <div className='login-reg-prompt mt-3'>
         <button className='link-primary' onClick={forgotSubmit} style={{backgroundColor:"white", border:"none"}}>
           Forgot password?
