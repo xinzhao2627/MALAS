@@ -1,28 +1,21 @@
 import './App.css';
-import React, {useState, useMemo, useRef } from 'react'
-import Select from 'react-select'
-import DatePicker from 'react-datepicker'
+import React, {useState, useRef } from 'react'
 import { NavLink } from 'react-router-dom';
 import SliderCaptcha from 'rc-slider-captcha'
 import createPuzzle from 'create-puzzle'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import "react-datepicker/dist/react-datepicker.css";
 import 'bootstrap/dist/js/bootstrap.min.js'
-import countryList from 'react-select-country-list'
+
 
 function Register () {
     const [f_email, s_f_email] = useState('')
     const [f_ps, s_f_ps] = useState('')
-    const [f_ln, s_f_ln]= useState('')
-    const [f_fn, s_f_fn]= useState('')
     const [reg_phase, s_reg_phase] = useState(1)
     const [passwordVisibility, setPasswordVisibility] = useState(false)
-    const [f_country, s_f_country] = useState('')
-    const [f_bd, s_f_bd] = useState(new Date())
     const [f_otp, s_f_otp] = useState(0)
     const [captchaAttempt, s_captchaAttempt] = useState(0)
     
-    const countries_options = useMemo(() => countryList().getData(), [])
     const regex = /[!#$%^&*()\-+={}[\]:;"'<>,?\/|\\]/;
     const format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
 
@@ -34,8 +27,6 @@ function Register () {
     const handleChangePassword = (ps) => {s_f_ps(ps.target.value)}
     const handleChangeEmail = (em) => {s_f_email(em.target.value)}
     const handleOtpChange = (e) => {s_f_otp(e.target.value)}
-    const handleChangeFN = (f) => {s_f_fn(f.target.value)}
-    const handleChangeLN = (l) => {s_f_ln(l.target.value)}
     const showPassword = () => {setPasswordVisibility(!passwordVisibility)}
 
     const verifyNewEmail = async (e) => {
@@ -153,61 +144,6 @@ function Register () {
             </div>
         </>
     )
-
-    const verifyNewName = () =>{
-        const name_length = f_fn.length + f_ln.length
-        if (name_length >= 255 || format.test(f_fn) || format.test(f_ln) || name_length === 0)   {
-            alert("name exceeded the limit")
-        } else {
-            s_reg_phase(5)
-        }
-    }
-    const create_name = (
-        <>  
-            <div className='mt-3'>
-                <span>{f_email}</span>
-            </div>
-            <h3 className='login-header-label mt-2'> What's your name? </h3>
-            <div className='mt-3' style={{fontSize:"15px"}}>
-                <span>
-                    We just need a little more info to set up your account.
-                </span>
-                <input className='login-header-input mt-3 py-2' type='text' placeholder='First name' onChange={handleChangeFN} value={f_fn}/>
-                <input className='login-header-input mt-3 py-2' type='text' placeholder='Last name' onChange={handleChangeLN} value={f_ln}/>
-            </div>
-            <div className='mt-4 login-pbtn'>
-                <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
-                <button className='ms-3 pbtn-2' name='Next' onClick={verifyNewName}>Next</button>
-            </div>
-        </>
-    )
-    const handleCountryChange = v => {s_f_country(v)}
-    const verifyBirthDate = () => {s_reg_phase(6)}
-    const create_birthday = (
-        <>  
-            <div className='mt-3'>
-                <span>{f_email}</span>
-            </div>
-            <h3 className='login-header-label mt-2'> What's your birthdate? </h3>
-            <div className='mt-3' style={{fontSize:"15px"}}>
-                <span>
-                    We just need a little more info to set up your account.
-                </span>
-                <div className='mt-3'>
-                    <strong>Country/region</strong>
-                    <Select options={countries_options} value={f_country} onChange={handleCountryChange}/>
-                </div>
-                <div className='mt-3' style={{display:'inline-flex', flexDirection:'column'}}>
-                    <strong>Birthdate</strong>
-                    <DatePicker selected={f_bd} onChange={(date) => s_f_bd(date)} className='mt-2'/>
-                </div>
-            </div>
-            <div className='mt-4 login-pbtn'>
-                <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
-                <button className='ms-3 pbtn-2' name='Next' onClick={verifyBirthDate}>Next</button>
-            </div>
-        </>
-    )
     const offsetXRef = useRef(0);
     const bot_recognition = (
         <>  
@@ -258,57 +194,6 @@ function Register () {
             </div>
         </>
     )
-    const after_info = (
-        <>
-            <div className='mt-3'>
-                <span>{f_email}</span>
-            </div>
-            <h3 className='login-header-label mt-2'> A quick note about your Microsoft account</h3>
-            <div className='img-center'>
-                <img src='/images/regLGO.png' alt='regLOGO' width={200} height={200}/>
-            </div>
-            <div>
-                <div className='reg-info'>
-                    <strong>
-                            Your important things are right here
-                    </strong>
-                    <small>
-                        When you sign in, things like your contacts, passwords, favorites,
-                        browsing history, and photos and files are available accross Microsoft products.
-                    </small>
-                </div>
-                <div className='reg-info'>
-                    <strong>
-                        Your privacy is our priority
-                    </strong>
-                    <small>
-                        To help protect your data, we use encryption and other security best practices.
-                    </small>
-                </div>
-                <div className='reg-info'>
-                    <strong>
-                            You're in control
-                    </strong>
-                    <small>
-                        We give you choices about how your data is used and what you sync.
-                    </small>
-                </div>
-                <div className='reg-info'>
-                    <strong>
-                            University project
-                    </strong>
-                    <small>
-                        This is a university project for Advanced database, solely used for academic and simulation purpose.
-                    </small>
-                </div>
-                
-            </div>
-            <small className='link-primary mt-3 d-block'>Learn more</small>
-            <div className='mt-4 login-pbtn'>
-                <button className='ms-3 pbtn-2' name='Next' >OK</button>
-            </div>
-        </>
-    )
     
     const otpVerify = () => {
         // verify OTP
@@ -350,12 +235,6 @@ function Register () {
                             ? create_password 
                         : reg_phase === 3
                             ? bot_recognition
-                        : reg_phase === 4 
-                            ? create_name
-                        : reg_phase === 5
-                            ? create_birthday
-                        : reg_phase === 6
-                            ? after_info
                             : null
                     )}
                 </div>

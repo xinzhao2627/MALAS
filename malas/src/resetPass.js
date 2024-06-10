@@ -1,22 +1,25 @@
 import './App.css';
-import React, {useState, useEffect, useRef } from 'react'
+import React, {useState, useRef } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import SliderCaptcha from 'rc-slider-captcha'
-import createPuzzle, { Result }  from 'create-puzzle'
+import createPuzzle from 'create-puzzle'
 
 
 
 function ResetPass() {
+  const navigate = useNavigate();
   const pics = ['/images/captchaP/mooP.jpg', '/images/captchaP/iniP.jpg', '/images/captchaP/picP.jpg']
   const getPic = () => {return pics[Math.floor(Math.random() * pics.length)]}
   const backSubmit = (e) => {window.location.reload()}
   const [forgot_phase, set_forgot_phase] = useState(1)
+  const [f_OTP, s_f_OTP] = useState(0)
   const [email, set_email] = useState('')
 
+
   const offsetXRef = useRef(0)
-  const bot_recognition = () => {
+  const bot_recognition = (
     <>
       <div className='mt-3'>
           <span> Please solve the puzzle so we know you're not a robot </span>
@@ -48,7 +51,8 @@ function ResetPass() {
           </div>
       </div>
     </>
-  }
+  )
+
 
   const accSubmit = async (e) => {
     e.preventDefault()
@@ -68,6 +72,7 @@ function ResetPass() {
     }
     forgot_phase(3)
   } 
+
   const handleChangeEmail = (e) => {set_email(e.target.value)}
   const enter_account = (
       <>
@@ -88,6 +93,55 @@ function ResetPass() {
   )
 
 
+
+
+  const otpSubmit = () => {
+    // TODO: upload transaction true or false 
+
+    // if (f_OTP === retrieved_OTP){
+    //   navigate('/')
+    // } else {
+    //   alert('incorrect OTP')
+    // }
+    navigate('/')
+  }
+
+  const handleOTPChange = (e) => {
+    s_f_OTP(e.target.value)
+  }
+  const enter_otp = (
+    <>
+      <span>{email}</span>
+      <h3 className='login-header-label mt-3'> Enter code</h3>
+      <span>We emailed the code to {email}. Please enter the code to sign-in</span>
+      <input className='login-header-input mt-3' type='number' value={f_OTP} onChange={handleOTPChange}/>
+      <div className='mt-4 login-pbtn'>
+        <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
+        <button className='ms-3 pbtn-2' name='Next' onClick={otpSubmit}>Sign in</button>
+      </div>
+    </>
+  )
+
+  const submitCDD = () => {
+    
+  }
+
+  const enter_ccd = (
+    <>
+      <span>{email}</span>
+      <h3 className='login-header-label mt-3'>CCD (changed)</h3>
+      <span>Please select 3 colors </span>
+      <div className='login-reg-prompt mt-3'>
+        <button className='link-primary'>
+          Use your password instead
+        </button>
+      </div>
+      <div className='mt-4 login-pbtn'>
+        <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
+        <button className='ms-3 pbtn-2' name='Next' onClick={submitCDD}>Sign in</button>
+      </div>
+    </>
+  )
 
     /**
      * 1. bot recognition

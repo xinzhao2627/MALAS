@@ -4,16 +4,15 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import SliderCaptcha from 'rc-slider-captcha'
-import createPuzzle, { Result }  from 'create-puzzle'
+import createPuzzle from 'create-puzzle'
 
 
 function Login (){
   const navigate = useNavigate();
-  const [fetched_data, set_fetched_data] = useState('')
+  const [fetched_data, set_fetched_data] = useState()
   const [user_name, set_user_name] = useState('')
   const [password, set_password] = useState('')
   const [prompt_phase, set_prompt_phase] = useState(1)
-  const [forgot_prompt, set_forgot_prompt] = useState(true)
   const [captchaAttempt, s_captchaAttempt] = useState(0)
   const [retrieved_OTP, s_retrieved_OTP] = useState(0)
   const [f_OTP, s_f_OTP] = useState(0)
@@ -302,13 +301,12 @@ function Login (){
               ? enter_otp
             : prompt_phase === 4
               ? enter_ccd
-              : <h1> NONE: ILLEGAL PHASE EXCEPTION</h1>
+              : null
           }
         </div>
-        
-        {(typeof fetched_data === "undefined") ? <p>loading...</p> : fetched_data.map((x) => 
-          <span key={x}>Fetched from python: {x}</span>
-        )}
+        {typeof fetched_data === 'undefined' ? <h1>Loading</h1> : fetched_data.map((d, i) => <span key={d+i}>
+          {d}
+        </span>)} 
       </div>
   )
 }
