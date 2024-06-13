@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, session, redirect
-from database import Query_pr, Query
+from database import Query_pr, Query, email_in_db
 app = Flask(__name__)
 
 @app.route("/users", methods=['GET'])
@@ -41,7 +41,7 @@ def regVerifyEmail():
     target_email = data.get('user_name')
     
     # dict content
-    email_in_DB = False
+    email_in_DB = email_in_db(target_email)
     message = ''
     proceed = False
     stat = 400

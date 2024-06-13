@@ -4,16 +4,15 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import SliderCaptcha from 'rc-slider-captcha'
-import createPuzzle, { Result }  from 'create-puzzle'
+import createPuzzle from 'create-puzzle'
 
 
 function Login (){
   const navigate = useNavigate();
-  const [fetched_data, set_fetched_data] = useState('')
+  const [fetched_data, set_fetched_data] = useState()
   const [user_name, set_user_name] = useState('')
   const [password, set_password] = useState('')
   const [prompt_phase, set_prompt_phase] = useState(1)
-  const [forgot_prompt, set_forgot_prompt] = useState(true)
   const [captchaAttempt, s_captchaAttempt] = useState(0)
   const [retrieved_OTP, s_retrieved_OTP] = useState(0)
   const [f_OTP, s_f_OTP] = useState(0)
@@ -35,7 +34,7 @@ function Login (){
   const handleChangeUser = (e) => {set_user_name(e.target.value)}
   const handleChangePassword = (e) => {set_password(e.target.value)}
   const backSubmit = (e) => {window.location.reload()}
-  const forgotSubmit = () => {}
+  
 // Prompt phase 1 = username
 // phase 2 = password
 // phase 2.5 = choose authentication
@@ -66,7 +65,7 @@ function Login (){
   const enter_account = (
     <>
       <h3 className='login-header-label mt-3'> Sign in</h3>
-      <input className='login-header-input mt-3' type='email' placeholder='Email or phone' onChange={handleChangeUser}/>
+      <input className='login-header-input mt-3' type='email' placeholder='Email or phone' onChange={handleChangeUser} value={user_name}/>
       <div className='login-reg-prompt mt-2'>
         <label>No account?</label>
         <NavLink to='/register' className='ms-1 link-primary'>
@@ -105,13 +104,16 @@ function Login (){
 
     set_prompt_phase(2.1)
   }
+  const forgotSubmit = () => {
+    navigate('/resetPass')
+  }
   const enter_password = (
     <>
       <div className='mt-4'>
         <span >{retrieved_user}</span>
       </div>
       <h3 className='login-header-label mt-3'> Enter password</h3>
-      <input className='login-header-input mt-3' type='password' placeholder='Password' onChange={handleChangePassword}/>
+      <input className='login-header-input mt-3' type='password' placeholder='Password' value={password}  onChange={handleChangePassword}/>
       <div className='login-reg-prompt mt-3'>
         <button className='link-primary' onClick={forgotSubmit} style={{backgroundColor:"white", border:"none"}}>
           Forgot password?
@@ -299,13 +301,12 @@ function Login (){
               ? enter_otp
             : prompt_phase === 4
               ? enter_ccd
-              : <h1> NONE: ILLEGAL PHASE EXCEPTION</h1>
+              : null
           }
         </div>
-        
-        {(typeof fetched_data === "undefined") ? <p>loading...</p> : fetched_data.map((x) => 
-          <span key={x}>Fetched from python: {x}</span>
-        )}
+        {typeof fetched_data === 'undefined' ? <h1>Loading</h1> : fetched_data.map((d, i) => <span key={d+i}>
+          {d}
+        </span>)} 
       </div>
   )
 }

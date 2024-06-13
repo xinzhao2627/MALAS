@@ -27,16 +27,34 @@ def select_users():
     cursor.close()
     return rows
 
-# TEST USER_TEST
-def insertUser(user, number):
-    print(user, " HAHAHAHAHAHAHA")
-    cursor = cnx.cursor()
-    query = "INSERT INTO user_test(userName, numberName) VALUES (%s, %s)"
-    cursor.execute(query, (user, number))
-    cnx.commit()
-    cursor.close()
-
 #READ METHODS
+
+def email_in_db(email):
+    cur = cnx.cursor()
+
+    query = "SELECT user_email FROM user WHERE user_email LIKE '" + email + "'"
+    cur.execute(query)
+    rows = cur.fetchall()
+
+    cnx.commit()
+    cur.close()
+
+    if len(rows) > 0:
+        #email is in db
+        return True
+    else:
+        #email is not in db
+        return False
+
+
+
+#UPDATE METHODS
+
+
+#DELETE METHODS
+
+
+#SPECIAL METHODS
 
 # with paramaters
 def Query_pr(query, parameters=()):
@@ -46,7 +64,6 @@ def Query_pr(query, parameters=()):
     cnx.commit()
     cur.close()
     return rows
-
 
 # query without needing parameters
 def Query(query):
@@ -58,14 +75,9 @@ def Query(query):
     return rows
 
 
-#UPDATE METHODS
-
-
-#DELETE METHODS
-
-
 #EXECUTE/CALL METHODS
 
+print(email_in_db("sample1@domain.com"))
 # insert_data_to_user(150003001, "Username1", "password1", "Carl", "Hipolito" ,"09123456789", "sample1@domain.com", "2003-09-14", "Philippines")
 # insert_data_to_user(150003002, "Username2", "password2", "Neil", "Baltar" ,"09123456788", "sample2@domain.com", "2003-01-01", "Philippines")
 # insert_data_to_user(150003003, "Username3", "password3", "Rainnand", "Montaniel" ,"09123456787", "sample3@domain.com", "2003-01-02", "Philippines")
