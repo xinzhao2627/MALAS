@@ -51,22 +51,31 @@ def received():
     
 @app.route('/lsotp', methods = ['POST'])    
 def lsotp():
-    t = "user_test" ; s = "sendOTP"
+    t = "user_test" ; s = "sendOTP" ; l = 5
     try:
         data = request.json 
         u = data.get("user_name")
         k = data.get("rkey")
         
-        if not u or not k: return jsonify(inv(s)), 400
+        if not u or len(k) <= l: return jsonify(inv(s)), 400
         rows = Query_pr("SELECT name from %s WHERE name = %s", (t, u))
         if not rows: return jsonify(dne(s)), 400
         
         code = executeOTP(k)
         
+        return jsonify({"message":f"code sent to {u}", "proceed":True, "code":code}),200
     except Exception as e:
-        return jsonify(err(s)),400
+        return jsonify(err(s, e)),400
 
-
+@app.route('/lvccd', methods = ['POST'])    
+def lsotp():
+    t = "user_test" ; s = "verifyOTP" ; l = 5
+    try:
+        code = None
+        
+        return jsonify({"message":f"code sent to ", "proceed":True, "code":code}),200
+    except Exception as e:
+        return jsonify(err(s, e)),400
 
     
         
