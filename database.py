@@ -45,17 +45,7 @@ def email_in_db(email):
     else:
         #email is not in db
         return False
-
-
-
-#UPDATE METHODS
-
-
-#DELETE METHODS
-
-
-#SPECIAL METHODS
-
+    
 # with paramaters
 def Query_pr(query, parameters=()):
     cur = cnx.cursor()
@@ -73,12 +63,3 @@ def Query(query):
     cnx.commit()
     cur.close()
     return rows
-
-
-#EXECUTE/CALL METHODS
-
-print(email_in_db("sample1@domain.com"))
-# insert_data_to_user(150003001, "Username1", "password1", "Carl", "Hipolito" ,"09123456789", "sample1@domain.com", "2003-09-14", "Philippines")
-# insert_data_to_user(150003002, "Username2", "password2", "Neil", "Baltar" ,"09123456788", "sample2@domain.com", "2003-01-01", "Philippines")
-# insert_data_to_user(150003003, "Username3", "password3", "Rainnand", "Montaniel" ,"09123456787", "sample3@domain.com", "2003-01-02", "Philippines")
-

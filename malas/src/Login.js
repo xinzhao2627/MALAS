@@ -9,7 +9,6 @@ import createPuzzle from 'create-puzzle'
 
 function Login (){
   const navigate = useNavigate();
-  const [fetched_data, set_fetched_data] = useState()
   const [user_name, set_user_name] = useState('')
   const [password, set_password] = useState('')
   const [prompt_phase, set_prompt_phase] = useState(1)
@@ -20,15 +19,6 @@ function Login (){
   const pics = ['/images/captchaP/mooP.jpg', '/images/captchaP/iniP.jpg', '/images/captchaP/picP.jpg']
   const getPic = () => {return pics[Math.floor(Math.random() * pics.length)]}
 
-
-  useEffect(() => {
-    const getData = async () => {
-      const res = await fetch("/users")
-      const data = await res.json()
-      set_fetched_data(data.users)
-    }
-    getData()
-  }, [])
 
   // SUBMIT SECTION
   const handleChangeUser = (e) => {set_user_name(e.target.value)}
@@ -44,22 +34,25 @@ function Login (){
 
 
   const accSubmit = async (e) => {
-    e.preventDefault()
-    const ex = {user_name}
-    const option  = {
-      method: "POST",
-      headers: {
-        "Content-Type":"application/json"
-      },
-      body: JSON.stringify(ex),
-      prompt_phase: prompt_phase
-    }
-    const response = await fetch("/received", option)
-    if (response.status === 201 || response.status === 200){
+    if (user_name.includes("@gmail.com")){
+      e.preventDefault()
+      const ex = {user_name}
+      const option  = {
+        method: "POST",
+        headers: {
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify(ex),
+        prompt_phase: prompt_phase
+      }
+      const response = await fetch("/received", option)
       const mes = await response.json()
       alert(mes.message)
+
+      if (mes.proceed === true && (response.status === 200 || response.status === 201)) set_prompt_phase(2)
+      
     }
-    set_prompt_phase(2)
+    else alert("invalid email format")
   }
 
   const enter_account = (
@@ -86,23 +79,24 @@ function Login (){
 
 
   const passwordSubmit = async (e) => {
-    // e.preventDefault()
-    // const ex = {password}
-    // const option  = {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type":"application/json"
-    //   },
-    //   body: JSON.stringify(ex),
-    //   prompt_phase: prompt_phase
-    // }
-    // const response = await fetch("/received", option)
-    // if (response.status === 201 || response.status === 200){
-    //   const mes = await response.json()
-    //   alert(mes.message)
-    // }
+    if (password === null || user_name === null){
+      e.preventDefault()
+      const ex = {password, user_name}
+      const option  = {
+        method: "POST",
+        headers: {
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify(ex),
+        prompt_phase: prompt_phase
+      }
+      const response = await fetch("/lgpv", option)
+      const mes = await response.json()
+      alert(mes.message)
 
-    set_prompt_phase(2.1)
+      if (mes.proceed === true && (response.status === 200 || response.status === 201)) set_prompt_phase(2.1)
+    }
+    else alert("Invalid entry on password section")
   }
   const forgotSubmit = () => {
     navigate('/resetPass')
@@ -304,9 +298,6 @@ function Login (){
               : null
           }
         </div>
-        {typeof fetched_data === 'undefined' ? <h1>Loading</h1> : fetched_data.map((d, i) => <span key={d+i}>
-          {d}
-        </span>)} 
       </div>
   )
 }

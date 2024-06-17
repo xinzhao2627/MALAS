@@ -64,3 +64,5 @@ input = input("Enter the otp: ")
 otp_checker(input) 
 
 
+def executeOTP(key):
+    return key

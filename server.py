@@ -1,38 +1,75 @@
 from flask import Flask, jsonify, request, session, redirect
 from database import Query_pr, Query, email_in_db
+from otp import executeOTP
+
 app = Flask(__name__)
 
-@app.route("/users", methods=['GET'])
-def hello():
-    # turn a data into dictionary [example]
-    user_data = Query("SELECT * FROM user_test")
-    us_data = []
-    for us in user_data:
-        us_data.append(us[0])
+
+def dne(type):return {"message": f"{type} does not exist.", "proceed": False}
+def inv(type):return {"message": f"Invalid {type}.", "proceed": False}
+def err(type, e):return {"message": f"Error in {type}, cannot proceed", "proceed": False, "error": e}
+
+def proc(type): return {"message": f"{type} Accepted","proceed": True}
+
+@app.route("/lgpv", methods=['POST'])
+def veripass():
+    t = "user" ; s = "Password"
+    
+    try:    
+        data = request.json
+        ps = data.get("password")
+        u = data.get("user_name")
         
-    
-    users = {
-        "users": us_data
-    }
-    
-    # turn into json and send it to frontend
-    return jsonify(users)
+        
+        ups = Query_pr("SELECT password FROM %s WHERE password = %s and user_name = %s", (t, ps, u))
+        
+        # turn into json and send it to frontend
+        return jsonify(dne(s)), 400 if not ups else jsonify(inv(s)), 400 if ups[0][0] != ps else jsonify(proc(s)), 200
+    except Exception as e:
+        return jsonify(err(s, e))
+
 
 @app.route('/received',methods = ['POST'])
 def received():
-    # use request.json to get data from frontend
-    data = request.json 
+    t = "user_test" ; s = "Email"
+    try:
+        data = request.json  # get data from client
+        user_name = data.get('user_name') # get the variable name from data
+        
+        
+        if not user_name: return  jsonify(inv(s)),400
+        rows = Query_pr("SELECT name from user WHERE name = %s", (user_name))
+        if not rows: return jsonify(dne(s)),
+        
+        
+        Query_pr("INSERT INTO %s(userName, numberName) VALUES(%s, %s)", (t, user_name, 20))
+        
+        # return the username into the frontend after verification
+        return jsonify(proc(s)),201
+    except Exception as e:
+        return jsonify(err(s,e)), 400
     
-    # FOR USER NAME/EMAIL/BINDED ACCOUNT
-    user_name = data.get('user_name') # variable name sa data.get ako magasasabi
-    Query_pr("INSERT INTO user_test(userName, numberName) VALUES(%s, %s)", (user_name, 20))
+@app.route('/lsotp', methods = ['POST'])    
+def lsotp():
+    t = "user_test" ; s = "sendOTP"
+    try:
+        data = request.json 
+        u = data.get("user_name")
+        k = data.get("rkey")
+        
+        if not u or not k: return jsonify(inv(s)), 400
+        rows = Query_pr("SELECT name from %s WHERE name = %s", (t, u))
+        if not rows: return jsonify(dne(s)), 400
+        
+        code = executeOTP(k)
+        
+    except Exception as e:
+        return jsonify(err(s)),400
+
+
+
     
-    
-    # return the username into the frontend after verification
-    return jsonify({
-        "message": f"I came from python, the username you sent is: {user_name}",
-        "proceed": True
-        }),201 # 201 for success request
+        
     
 @app.route('/regVerifyEmail', methods = ['POST'])
 def regVerifyEmail():
