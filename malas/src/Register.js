@@ -30,32 +30,30 @@ function Register () {
     const showPassword = () => {setPasswordVisibility(!passwordVisibility)}
 
     const verifyNewEmail = async (e) => {
-        // TODO: upload transaction
-
-        if (regex.test(f_email)){
-            alert("Email has special")
+        if (regex.test(f_email) || f_email === null){
+            alert("Email has special or is null")
 
         } else {
-            // e.preventDefault()
-            // const ex = {f_email}
-            // const option  = {
-            //   method: "POST",
-            //   headers: {
-            //     "Content-Type":"application/json"
-            //   },
-            //   body: JSON.stringify(ex),
-            //   reg_phase: reg_phase
-            // }
-            // const response = await fetch("/regVerifyEmail", option)
-            // if (response.status === 201 || response.status === 200){
-            //   const data = await response.json()
-            //   alert(data.message)
-            //   s_reg_phase(2)
+            e.preventDefault()
+            const ex = {f_email}
+            const option  = {
+              method: "POST",
+              headers: {
+                "Content-Type":"application/json"
+              },
+              body: JSON.stringify(ex),
+              reg_phase: reg_phase
+            }
+            const response = await fetch("/regVerifyEmail", option)
+            if (response.status === 201 || response.status === 200){
+              const data = await response.json()
+              alert(data.message)
+              s_reg_phase(2)
 
             
-            // } else {
-            //   alert('This email cannot be used')
-            // }
+            } else {
+              alert('This email cannot be used')
+            }
             s_reg_phase(2)
         }
         
@@ -92,27 +90,6 @@ function Register () {
         if (f_ps.includes(f_email) || f_ps.length < 8 || passPoints < 2){
             alert('Wrong!')
         } else {
-            // e.preventDefault()
-            // const ex = {f_ps}
-            // const option  = {
-            //   method: "POST",
-            //   headers: {
-            //     "Content-Type":"application/json"
-            //   },
-            //   body: JSON.stringify(ex),
-            //   reg_phase: reg_phase
-            // }
-            // const response = await fetch("/regVerifyPassword", option)
-            // if (response.status === 201 || response.status === 200){
-            //   const data = await response.json()
-            //   alert(data.message)
-            //   s_reg_phase(3)
-
-            
-            // } else {
-            //   alert('error on sending otp!, otp not sent to user email')
-            //   backSubmit()
-            // }
             s_reg_phase(3)
         }
     }
@@ -196,9 +173,7 @@ function Register () {
     )
     
     const otpVerify = () => {
-        // verify OTP
         let otpVal = true
-
         if (otpVal){
             s_reg_phase(2.1)
         }
@@ -220,6 +195,7 @@ function Register () {
             </div>
         </>
     )
+    
     return (
         <div className='login-section App-header'>
             <div className="login-box px-5 pb-2" style={(reg_phase===5) ? {width:'600px', height:'400px'} : null }>

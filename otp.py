@@ -13,6 +13,7 @@ def send_otp_to(email):
 
     # Email Contents
     email_msg = f"""From: Microsoup Authenticator {sender}
+    
 To: {receiver}
 Subject: {subject}\n
 {body}
@@ -45,6 +46,7 @@ def otp_checker(otp_input):
     else:
         print(False)
 
+
 # def otp_duration():
 #     for x in range(0, 31):
 #         time_remaining = totp.interval - (time.time() % totp.interval)
@@ -57,12 +59,9 @@ otp_now = totp.now() #Get an otp
 #This is the timer function running on another thread (tldr: The timer runs while the program takes input of user)
 timer = threading.Thread(target=timer, daemon=True, args=(30,))
 
-print(otp_now)
-send_otp_to("luxfenrir78@gmail.com") 
-timer.start() #Starts timer function
-input = input("Enter the otp: ")
-otp_checker(input) 
 
-
-def executeOTP(key):
-    return key
+# print(otp_now)
+# send_otp_to("luxfenrir78@gmail.com") 
+# timer.start() #Starts timer function
+# input = input("Enter the otp: ")
+# otp_checker(input) 
