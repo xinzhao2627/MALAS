@@ -45,11 +45,18 @@ function Login (){
         body: JSON.stringify(ex),
         prompt_phase: prompt_phase
       }
-      const response = await fetch("/received", option)
-      const mes = await response.json()
-      alert(mes.message)
-
-      if (mes.proceed === true && (response.status === 200 || response.status === 201)) set_prompt_phase(2)
+      try{
+        const response = await fetch("/received", option)
+      
+        const mes = await response.json()
+        
+        alert(mes.message)
+        
+        if (mes.proceed === true && (response.status === 200 || response.status === 201)) set_prompt_phase(2)
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        alert('An error occurred while processing your request.');
+      }
       
     }
     else alert("invalid email format")

@@ -35,26 +35,25 @@ def received():
     t = "user" ; s = "Email"
     try:
         data = request.json  # get data from client
-        user_email = data.get('user_name') # get the variable name from data
+        user_email = str(data.get('user_name')) # get the variable name from data
         
         
         if not user_email: return  jsonify(inv(s)),400
-        rows = Query_pr("SELECT name from user WHERE user_email = %s", (user_email))
-        if not rows: return jsonify(dne(s)),
+        rows = Query(f"SELECT user_email from user WHERE user_email = '{user_email}'")
+        if not rows: return jsonify(dne(s)),400
         
         
-        Query_pr("INSERT INTO %s(userName, numberName) VALUES(%s, %s)", (t, user_email, 20))
+        #TODO Query_pr("INSERT INTO %s(userName, numberName) VALUES(%s, %s)", (t, user_email, 20))
         
         # return the username into the frontend after verification
-        return jsonify(proc(s)),201
+        return jsonify(proc(s)),200
     except Exception as e:
-        return jsonify(err(s,e)), 400
+        return jsonify(err/(s, e)), 400
     
 @app.route('/lsotp', methods = ['POST'])    
 def lsotp():
     t = "user" ; s = "sendOTP" ; l = 5
     try:
-        
         data = request.json 
         u = data.get("user_name")
         k = data.get("rkey")
