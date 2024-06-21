@@ -1,24 +1,36 @@
 import './App.css';
+import CCD from './ccd';
 import React, {useState, useEffect, useRef } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import SliderCaptcha from 'rc-slider-captcha'
 import createPuzzle from 'create-puzzle'
-
+import { useStopwatch } from "react-use-precision-timer";
 
 function Login (){
+  const [ccdProceed, setCcdProceed] = useState(false)
   const navigate = useNavigate();
   const [user_name, set_user_name] = useState('')
   const [password, set_password] = useState('')
-  const [prompt_phase, set_prompt_phase] = useState(1)
+  const [prompt_phase, set_prompt_phase] = useState(4)
   const [captchaAttempt, s_captchaAttempt] = useState(0)
   const [retrieved_OTP, s_retrieved_OTP] = useState(0)
+  const [keytp, set_keytp] = useState('')
   const [f_OTP, s_f_OTP] = useState(0)
+  const [tm, settm] = useState(0)
   const retrieved_user = "testing@gmail.com"
   const pics = ['/images/captchaP/mooP.jpg', '/images/captchaP/iniP.jpg', '/images/captchaP/picP.jpg']
   const getPic = () => {return pics[Math.floor(Math.random() * pics.length)]}
+  const stopwatch = useStopwatch()
 
+  const testing_ccd_data = {
+    squirtle: { hex: "#A1D9EF" },
+    charmander: { hex: "#EA8B24" },
+    bulbasaur: { hex: "#7fcaac" },
+    pikachu: { hex: "#f7df2c" },
+    eevee: { hex: "#c48d50" }
+  }
 
   // SUBMIT SECTION
   const handleChangeUser = (e) => {set_user_name(e.target.value)}
@@ -34,6 +46,8 @@ function Login (){
 
 
   const accSubmit = async (e) => {
+    stopwatch.start()
+    settm(stopwatch.getElapsedRunningTime())
     if (user_name.includes("@gmail.com")){
       e.preventDefault()
       const ex = {user_name}
@@ -52,7 +66,10 @@ function Login (){
         
         alert(mes.message)
         
-        if (mes.proceed === true && (response.status === 200 || response.status === 201)) set_prompt_phase(2)
+        if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
+
+          set_prompt_phase(2)
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
         alert('An error occurred while processing your request.');
@@ -86,7 +103,7 @@ function Login (){
 
 
   const passwordSubmit = async (e) => {
-    if (password === null || user_name === null){
+    if (password !== null || user_name !== null){
       e.preventDefault()
       const ex = {password, user_name}
       const option  = {
@@ -139,9 +156,10 @@ function Login (){
           <span>Color code detection</span>
           <p>Choose colors that were assigned upon user registration</p>
       </div>
-      <div className='button-59 mt-3 yellow-59' id='OTP' onClick={auth_button}>
+      <div className='button-59 mt-3 pb-2 yellow-59' id='OTP' onClick={auth_button}>
         <span>One-time password (OTP)</span>
         <p>Send a security code on your linked account</p>
+        {/* <input type='text' className='text-center' value={keytp} onChange={handlekeytp} placeholder='Enter key for OTP'/> */}
       </div>
       <div className='mt-4 login-pbtn' style={{textAlign:"center"}}>
         <button className='pbtn-1 btn-wide' style={{width:"200px"}} name='Back' onClick={backSubmit}>Back</button>
@@ -149,28 +167,25 @@ function Login (){
     </>
   )
   const sendOTP = async (e) => {
-    // e.preventDefault()
-    // const ex = {user_name}
-    // const option  = {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type":"application/json"
-    //   },
-    //   body: JSON.stringify(ex),
-    //   prompt_phase: prompt_phase
-    // }
-    // const response = await fetch("/received", option)
-    // if (response.status === 201 || response.status === 200){
-    //   const data = await response.json()
-    //   alert(data.message)
-    //   set_prompt_phase(3.5)
+    e.preventDefault()
+    const ex = {user_name}
+    const option  = {
+      method: "POST",
+      headers: {
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify(ex),
+      prompt_phase: prompt_phase
+    }
+    const response = await fetch("/lsotp", option)
+    const mes = await response.json()
+    alert(mes.message)
 
-      
-    // } else {
-    //   alert('error on sending otp!, otp not sent to user email')
-    //   backSubmit()
-    // }
-    set_prompt_phase(3.5)
+    if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
+      s_retrieved_OTP(mes.code)
+      console.log(retrieved_OTP)
+      set_prompt_phase(3.5)
+    }
   }
   const show_otp = (
     <>
@@ -194,12 +209,12 @@ function Login (){
   const otpSubmit = () => {
     // TODO: upload transaction true or false 
 
-    // if (f_OTP === retrieved_OTP){
-    //   navigate('/')
-    // } else {
-    //   alert('incorrect OTP')
-    // }
-    navigate('/')
+    if (f_OTP === retrieved_OTP){
+      navigate('/')
+    } else {
+      alert('incorrect OTP')
+    }
+    
   }
   const enter_otp = (
     <>
@@ -213,19 +228,27 @@ function Login (){
       </div>
     </>
   )
+
+  const ccdSubmit = (e) => {
+    if (ccdProceed){
+      alert('login successful')
+      navigate('/')
+    }
+  }
+
   const enter_ccd = (
     <>
       <span>{user_name}</span>
-      <h3 className='login-header-label mt-3'>CCD (changed)</h3>
-      <span>We emailed the code to {user_name}. Please enter the code to sign-in</span>
+      <h3 className='login-header-label mt-3'>CCD</h3>
+      <CCD colorData = {testing_ccd_data} ccdProceed={ccdProceed} setCcdProceed={setCcdProceed} />
       <div className='login-reg-prompt mt-3'>
-        <button className='link-primary'>
+        <button className='link-primary' style={{border:'none', cursor:'pointer', backgroundColor:'transparent'}}>
           Use your password instead
         </button>
       </div>
       <div className='mt-4 login-pbtn'>
         <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
-        <button className='ms-3 pbtn-2' name='Next' onClick={otpSubmit}>Sign in</button>
+        <button className='ms-3 pbtn-2' name='Next' onClick={ccdSubmit}>Sign in</button>
       </div>
     </>
   )
@@ -280,14 +303,13 @@ function Login (){
       </>
   )
   return (
-      <div className='login-section App-header'>
-        <div className="login-box px-5 pb-4"  >
+      <div className='login-section App-header' >
+        <div className="login-box px-5 pb-4"  style={(prompt_phase===4) ? {width:'800px', height:'700px'} : null }>
           <div className='login-header-logo mb-2'>
             <NavLink to='/'>
             <img src='/images/microsoft-seeklogo.jpg' alt='micros_logo' width="120px" height="25px"/>
             </NavLink>
           </div>
-          
           { prompt_phase === 1
               ? enter_account
             : prompt_phase === 2

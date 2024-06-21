@@ -35,11 +35,11 @@ def received():
     t = "user" ; s = "Email"
     try:
         data = request.json  # get data from client
-        user_email = str(data.get('user_name')) # get the variable name from data
+        user_email = data.get('user_name') # get the variable name from data
         
         
         if not user_email: return  jsonify(inv(s)),400
-        rows = Query(f"SELECT user_email from user WHERE user_email = '{user_email}'")
+        rows = Query(f"SELECT user_email from {t} WHERE user_email = '{user_email}'")
         if not rows: return jsonify(dne(s)),400
         
         
@@ -56,14 +56,14 @@ def lsotp():
     try:
         data = request.json 
         u = data.get("user_name")
-        k = data.get("rkey")
+        # if not u: return jsonify(inv(s)), 400
+        # rows = Query_pr("SELECT name from %s WHERE name = %s", (t, u))
+        # if not rows: return jsonify(dne(s)), 400
         
-        if not u or len(k) <= l: return jsonify(inv(s)), 400
-        rows = Query_pr("SELECT name from %s WHERE name = %s", (t, u))
-        if not rows: return jsonify(dne(s)), 400
         
-        otp.send_otp_to(u)
-        code = otp.otp_now
+        
+        code = otp.send_otp_to("xinzhao2627@gmail.com")
+        
         
         
         return jsonify({"message":f"code sent to {u}", "proceed":True, "code":code}),200
