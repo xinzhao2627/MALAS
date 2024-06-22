@@ -19,6 +19,7 @@ function Register () {
     const [passwordVisibility, setPasswordVisibility] = useState(false)
     const [f_otp, s_f_otp] = useState(0)
     const [captchaAttempt, s_captchaAttempt] = useState(0)
+    const [retrieved_OTP, s_retrieved_OTP] = useState(0)
     
     const regex = /[!#$%^&*()\-+={}[\]:;"'<>,?\/|\\]/;
     const format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
@@ -32,7 +33,25 @@ function Register () {
     const handleChangeEmail = (em) => {s_f_email(em.target.value)}
     const handleOtpChange = (e) => {s_f_otp(e.target.value)}
     const showPassword = () => {setPasswordVisibility(!passwordVisibility)}
-
+    const sendOTP = async (e) => {
+        e.preventDefault()
+        const ex = {f_email}
+        const option  = {
+          method: "POST",
+          headers: {
+            "Content-Type":"application/json"
+          },
+          body: JSON.stringify(ex),
+          reg_phase: reg_phase
+        }
+        const response = await fetch("/lsotp", option)
+        const mes = await response.json()
+        alert(mes.message)
+    
+        if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
+          s_retrieved_OTP(mes.code)
+        }
+    }
     const verifyNewEmail = async (e) => {
         if (regex.test(f_email) || f_email === null){
             alert("Email has special or is null")
@@ -49,13 +68,14 @@ function Register () {
               reg_phase: reg_phase
             }
             const response = await fetch("/regVerifyEmail", option)
-            if (response.status === 201 || response.status === 200){
-              const data = await response.json()
-              alert(data.message)
-              s_reg_phase(2)
+            const mes = await response.json()
+            alert(mes.message)
+            if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
+                alert('can now proceed to otp')
 
-            
-            } else {
+                reg_phase(2)
+            }
+            else {
               alert('This email cannot be used')
             }
             s_reg_phase(2)
@@ -80,6 +100,31 @@ function Register () {
                     <button className='pbtn-1' name='Back'>Cancel</button>
                 </NavLink>
                 <button className='ms-3 pbtn-2' name='Next' onClick={verifyNewEmail}>Next</button>
+            </div>
+        </>
+    )
+
+    
+    const otpVerify = () => {
+        let otpVal = true
+        if (otpVal){
+            s_reg_phase(2.1)
+        }
+        
+    }
+    const otp_page = (
+        <>
+            <span>{f_email}</span>
+            <h3 className='login-header-label mt-3'> Enter code</h3>
+            <span>We just sent a code to {f_email}</span>
+            <input className='login-header-input mt-3' type='number' onChange={handleOtpChange} value={f_otp}/>
+            <div className='mt-4'>
+                <span>Didn't received it? please wait for a few minutes and </span>
+                <span className='link-primary' style={{cursor:'pointer'}} onClick={sendOTP}>try again</span>
+            </div>
+            <div className='mt-4 login-pbtn'>
+                <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
+                <button className='ms-3 pbtn-2' name='Next' onClick={otpVerify}>Verify</button>
             </div>
         </>
     )
@@ -175,36 +220,29 @@ function Register () {
             </div>
         </>
     )
-    
-    const otpVerify = () => {
-        let otpVal = true
-        if (otpVal){
-            s_reg_phase(2.1)
-        }
-        
-    }
-    const otp_page = (
-        <>
-            <span>{f_email}</span>
-            <h3 className='login-header-label mt-3'> Enter code</h3>
-            <span>We just sent a code to {f_email}</span>
-            <input className='login-header-input mt-3' type='number' onChange={handleOtpChange} value={f_otp}/>
-            <div className='mt-4'>
-                <span>Didn't received it? please wait for a few minutes and </span>
-                <span className='link-primary' style={{cursor:'pointer'}}>try again</span>
-            </div>
-            <div className='mt-4 login-pbtn'>
-                <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
-                <button className='ms-3 pbtn-2' name='Next' onClick={otpVerify}>Verify</button>
-            </div>
-        </>
-    )
-    const ccdSubmit = (e) => {
+
+
+    const ccdSubmitAll = async (e) => {
         if (ccdProceed){
-
-            // TODO login 
-
-            alert('login successful')
+            e.preventDefault()
+            const ex = {f_email, f_ps, colorData}
+            const option  = {
+              method: "POST",
+              headers: {
+                "Content-Type":"application/json"
+              },
+              body: JSON.stringify(ex),
+              reg_phase: reg_phase
+            }
+            const response = await fetch("/regFinalize", option)
+            const mes = await response.json()
+            alert(mes.message)
+        
+            if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
+              alert('login successful')
+            } else {
+                alert('login unsuccessful')
+            }
             navigate('/')
         } else {
             alert('error on ccd color/key selection')
@@ -223,7 +261,7 @@ function Register () {
         </div>
         <div className='mt-4 login-pbtn'>
         <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
-        <button className='ms-3 pbtn-2' name='Next' onClick={ccdSubmit}>Sign in</button>
+        <button className='ms-3 pbtn-2' name='Next' onClick={ccdSubmitAll}>Sign in</button>
         </div>
     </>
     )

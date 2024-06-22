@@ -1,29 +1,33 @@
 import './App.css';
 import CCD from './ccd';
-import React, {useState, useEffect, useRef } from 'react'
+import React, {useState, useEffect, useRef, useCallback } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import SliderCaptcha from 'rc-slider-captcha'
 import createPuzzle from 'create-puzzle'
-import { useStopwatch } from "react-use-precision-timer";
+import {useMomentaryBool} from "react-use-precision-timer";
+import {useElapsedTime} from "use-elapsed-time"
 
 function Login (){
+  const [transac_status, setTransac_status] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const {elapsedTime} = useElapsedTime({ isPlaying })
   const [ccdProceed, setCcdProceed] = useState(false)
   const navigate = useNavigate();
   const [user_name, set_user_name] = useState('')
   const [password, set_password] = useState('')
-  const [prompt_phase, set_prompt_phase] = useState(4)
+  const [prompt_phase, set_prompt_phase] = useState(1)
   const [captchaAttempt, s_captchaAttempt] = useState(0)
   const [retrieved_OTP, s_retrieved_OTP] = useState(0)
   const [keytp, set_keytp] = useState('')
   const [f_OTP, s_f_OTP] = useState(0)
-  const [tm, settm] = useState(0)
   const retrieved_user = "testing@gmail.com"
   const pics = ['/images/captchaP/mooP.jpg', '/images/captchaP/iniP.jpg', '/images/captchaP/picP.jpg']
   const getPic = () => {return pics[Math.floor(Math.random() * pics.length)]}
-  const stopwatch = useStopwatch()
-
+  const [otpRetry, setOtpRetry] = useMomentaryBool(true, 30000)
+  const [reSec,setReSec] = useState(0)
+  
   const [colorData, setColorData] = useState({
     squirtle: { hex: "#A1D9EF" },
     charmander: { hex: "#EA8B24" },
@@ -35,7 +39,14 @@ function Login (){
   // SUBMIT SECTION
   const handleChangeUser = (e) => {set_user_name(e.target.value)}
   const handleChangePassword = (e) => {set_password(e.target.value)}
-  const backSubmit = (e) => {window.location.reload()}
+  const upload_transaction = (stat) => {
+    setIsPlaying(false)
+    setTransac_status(stat)
+  }
+  const backSubmit = (e) => {
+    upload_transaction(false)
+    window.location.reload()
+  }
   
 // Prompt phase 1 = username
 // phase 2 = password
@@ -46,8 +57,7 @@ function Login (){
 
 
   const accSubmit = async (e) => {
-    stopwatch.start()
-    settm(stopwatch.getElapsedRunningTime())
+    setIsPlaying(true)
     if (user_name.includes("@gmail.com")){
       e.preventDefault()
       const ex = {user_name}
@@ -166,43 +176,51 @@ function Login (){
       </div>
     </>
   )
-  const sendOTP = async (e) => {
-    e.preventDefault()
-    const ex = {user_name}
-    const option  = {
-      method: "POST",
-      headers: {
-        "Content-Type":"application/json"
-      },
-      body: JSON.stringify(ex),
-      prompt_phase: prompt_phase
-    }
-    const response = await fetch("/lsotp", option)
-    const mes = await response.json()
-    alert(mes.message)
+  
+  
+  const handleStartTimer_reSend = () => {
+    const timerEndTime = new Date(Date.now() + 30 * 1000); // set end time to 30 seconds from now
+    const timerInterval = setInterval(() => {
+      const now = new Date();
+      const timeRemaining = Math.max(0, timerEndTime - now);
+      const secondsRemaining = Math.floor(timeRemaining / 1000);
+      setReSec(secondsRemaining);
+      if (secondsRemaining <= 0) {
+        clearInterval(timerInterval);
+        setReSec(0); // reset reSec to 0
+      }
+    }, 1000);
+  };
+  
 
-    if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
-      s_retrieved_OTP(mes.code)
-      console.log(retrieved_OTP)
-      set_prompt_phase(3.5)
+  const sendOTP = async (e) => {
+
+    if (prompt_phase === 3.5){
+      handleStartTimer_reSend()
+      setOtpRetry(e)
     }
+    
+    // e.preventDefault()
+    // const ex = {user_name}
+    // const option  = {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type":"application/json"
+    //   },
+    //   body: JSON.stringify(ex),
+    //   prompt_phase: prompt_phase
+    // }
+    // const response = await fetch("/lsotp", option)
+    // const mes = await response.json()
+    // alert(mes.message)
+
+    // if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
+    //   s_retrieved_OTP(mes.code)
+    //   console.log(retrieved_OTP)
+    //   set_prompt_phase(3.5)
+    // }
   }
-  const show_otp = (
-    <>
-      <span>{user_name}</span>
-      <h3 className='login-header-label mt-3'> Sign in</h3>
-      <span>We'll send a code to {user_name} to sign you in.</span>
-      <div className='login-reg-prompt mt-3'>
-        <span className='link-primary' style={{cursor:'pointer'}}>
-          Use your password instead
-        </span>
-      </div>
-      <div className='mt-4 login-pbtn'>
-        <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
-        <button className='ms-3 pbtn-2' name='Next' onClick={sendOTP}>Send code</button>
-      </div>
-    </>
-  )
+
   const handleOTPChange = (e) => {
     s_f_OTP(e.target.value)
   }
@@ -216,22 +234,48 @@ function Login (){
     }
     
   }
+
+  //3.5
   const enter_otp = (
     <>
       <span>{user_name}</span>
       <h3 className='login-header-label mt-3'> Enter code</h3>
       <span>We emailed the code to {user_name}. Please enter the code to sign-in</span>
       <input className='login-header-input mt-3' type='number' value={f_OTP} onChange={handleOTPChange}/>
+      <div className='mt-4'>
+                <span>Didn't received it? please wait for a few minutes and </span>
+                <span className='link-primary' style={{cursor:(otpRetry) ? 'pointer' : 'not-allowed'}} onClick={sendOTP}>
+                  {otpRetry ? 'try again' : `try again in ${reSec} seconds`}
+                </span>
+            </div>
       <div className='mt-4 login-pbtn'>
         <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
         <button className='ms-3 pbtn-2' name='Next' onClick={otpSubmit}>Sign in</button>
       </div>
     </>
   )
+    // 3
+    const show_otp = (
+      <>
+        <span>{user_name}</span>
+        <h3 className='login-header-label mt-3'> Sign in</h3>
+        <span>We'll send a code to {user_name} to sign you in.</span>
+        <div className='login-reg-prompt mt-3'>
+          <span className='link-primary' style={{cursor:'pointer'}}>
+            Code 
+          </span>
+        </div>
+        <div className='mt-4 login-pbtn'>
+          <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
+          <button className='ms-3 pbtn-2' name='Next' onClick={sendOTP}>Send code</button>
+        </div>
+      </>
+    )
 
   const ccdSubmit = (e) => {
     if (ccdProceed){
       alert('login successful')
+      upload_transaction(true)
       navigate('/')
     }
   }

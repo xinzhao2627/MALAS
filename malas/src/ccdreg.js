@@ -117,7 +117,7 @@ export default function RegCCD({setCcdProceed, items, setColorData}) {
                     </div>
                 </div>
             }
-            <div className="d-flex justify-content-center align-items-center m-3" style={{width:'100%'}}>
+            <div className="d-flex justify-content-center align-items-center m-3">
                 <button className="btn btn-primary" style={{width:'100px', height:'100%'}} onClick={handleSave}>
                     Save
                 </button>
