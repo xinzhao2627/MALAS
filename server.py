@@ -70,11 +70,13 @@ def lsotp():
     except Exception as e:
         return jsonify(err(s, e)),400
 
-@app.route('/lvccd', methods = ['POST'])    
+@app.route('/retrieveccd', methods = ['POST'])    
 def lvccd():
     t = "user" ; s = "verifyOTP" ; l = 5
     try:
-        code = None
+        # get the ccd
+        # query pr
+        
         
         return jsonify({"message":f"code sent to ", "proceed":True, "code":code}),200
     except Exception as e:
@@ -91,12 +93,18 @@ def regVerifyEmail():
     u = data.get('f_email')
     
     # dict content
-    emdb = Query_pr("SELECT name FROM %s WHERE name = %s", (t, u))
+    # emdb = Query_pr("SELECT name FROM %s WHERE name = %s", (t, u))
     
-    return jsonify(aexer(s)),400 if emdb else jsonify(proc(s)),200
+    
+    # if emdb: return jsonify(aexer(s)),400
+    
+    # TODO send otp
+    code = otp.send_otp_to("xinzhao2627@gmail.com")
+    print('THIS IS THE CODE: ', code)
+    return jsonify({"message":f"code sent to {u}", "proceed":True, "code":code}),200
 
-@app.route('/regccd', methods = ['POST'])
-def regccd():
+@app.route('/regFinalize', methods = ['POST'])
+def regFinalize():
     t = "ccd" ; s = "reg ccd"
     try:
         data = request.json
@@ -109,6 +117,28 @@ def regccd():
         return jsonify(proc(s)),200 
     except Exception as e:
         return jsonify(err(s, e)),400
+    
+# UPLOAD TRANSACTION
+@app.route('/uploadTransaction', methods = ['POST'])
+def uploadTransaction(): 
+    t = "transaction" ; s = "transaction upload"
+    
+    try:
+        data = request.json
+        t_email = data.get('user_name')
+        t_stat = data.get('transac_status')
+        t_elapsed = data.get('elapsedTime')
+        
+        # TODO upload to transaction
+        
+        
+        
+        print(t_email, ' ', t_elapsed, ' ', t_stat)
+        
+        return jsonify(proc(s)), 200
+    except Exception as e:
+        return jsonify(err(s, e)), 400
+    
 
 if __name__ == "__main__":
     app.run(debug=True)

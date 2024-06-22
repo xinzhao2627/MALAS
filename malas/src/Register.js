@@ -7,51 +7,36 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import "react-datepicker/dist/react-datepicker.css";
 import 'bootstrap/dist/js/bootstrap.min.js'
 import RegCCD from './ccdreg'
-
+import {useMomentaryBool} from "react-use-precision-timer";
 
 function Register () {
+    const [otpRetry, setOtpRetry] = useMomentaryBool(true, 30000)
     const [ccdProceed, setCcdProceed] = useState(false)
     const [colorData, setColorData] = useState() 
     const navigate = useNavigate();
     const [f_email, s_f_email] = useState('')
     const [f_ps, s_f_ps] = useState('')
-    const [reg_phase, s_reg_phase] = useState(1)
+    const [reg_phase, s_reg_phase] = useState(4)
     const [passwordVisibility, setPasswordVisibility] = useState(false)
-    const [f_otp, s_f_otp] = useState(0)
+    const [f_OTP, s_f_OTP] = useState(0)
     const [captchaAttempt, s_captchaAttempt] = useState(0)
     const [retrieved_OTP, s_retrieved_OTP] = useState(0)
-    
+    const [reSec,setReSec] = useState(0)
     const regex = /[!#$%^&*()\-+={}[\]:;"'<>,?\/|\\]/;
     const format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
 
     const pics = ['/images/captchaP/mooP.jpg', '/images/captchaP/iniP.jpg', '/images/captchaP/picP.jpg']
     const getPic = () => {return pics[Math.floor(Math.random() * pics.length)]}
-    const backSubmit = (e) => {window.location.reload()}
+    const backSubmit = (e) => {
+        
+        window.location.reload()
+    }
 
 
     const handleChangePassword = (ps) => {s_f_ps(ps.target.value)}
     const handleChangeEmail = (em) => {s_f_email(em.target.value)}
-    const handleOtpChange = (e) => {s_f_otp(e.target.value)}
+    const handleOtpChange = (e) => {s_f_OTP(e.target.value)}
     const showPassword = () => {setPasswordVisibility(!passwordVisibility)}
-    const sendOTP = async (e) => {
-        e.preventDefault()
-        const ex = {f_email}
-        const option  = {
-          method: "POST",
-          headers: {
-            "Content-Type":"application/json"
-          },
-          body: JSON.stringify(ex),
-          reg_phase: reg_phase
-        }
-        const response = await fetch("/lsotp", option)
-        const mes = await response.json()
-        alert(mes.message)
-    
-        if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
-          s_retrieved_OTP(mes.code)
-        }
-    }
     const verifyNewEmail = async (e) => {
         if (regex.test(f_email) || f_email === null){
             alert("Email has special or is null")
@@ -71,14 +56,14 @@ function Register () {
             const mes = await response.json()
             alert(mes.message)
             if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
-                alert('can now proceed to otp')
-
-                reg_phase(2)
+                alert('The email is usable, otp sent')
+                s_retrieved_OTP(mes.code)
+                console.log('code: ' + retrieved_OTP)
+                if (reg_phase === 1) reg_phase(2)
             }
             else {
               alert('This email cannot be used')
             }
-            s_reg_phase(2)
         }
         
     }
@@ -104,11 +89,32 @@ function Register () {
         </>
     )
 
-    
-    const otpVerify = () => {
-        let otpVal = true
+    const handleStartTimer_reSend = () => {
+        const timerEndTime = new Date(Date.now() + 30 * 1000); // set end time to 30 seconds from now
+        const timerInterval = setInterval(() => {
+            const now = new Date();
+            const timeRemaining = Math.max(0, timerEndTime - now);
+            const secondsRemaining = Math.floor(timeRemaining / 1000);
+            setReSec(secondsRemaining);
+            if (secondsRemaining <= 0) {
+            clearInterval(timerInterval);
+            setReSec(0); // reset reSec to 0
+            }
+        }, 1000);
+    };
+
+    const sendOTP = async (e) => {
+        handleStartTimer_reSend()
+        setOtpRetry(e)
+        verifyNewEmail(e)
+    }
+
+    const otpSubmit = () => {
+        let otpVal = f_OTP === retrieved_OTP
         if (otpVal){
             s_reg_phase(2.1)
+        } else {
+            alert('incorrect OTP')
         }
         
     }
@@ -117,14 +123,16 @@ function Register () {
             <span>{f_email}</span>
             <h3 className='login-header-label mt-3'> Enter code</h3>
             <span>We just sent a code to {f_email}</span>
-            <input className='login-header-input mt-3' type='number' onChange={handleOtpChange} value={f_otp}/>
+            <input className='login-header-input mt-3' type='number' onChange={handleOtpChange} value={f_OTP}/>
             <div className='mt-4'>
                 <span>Didn't received it? please wait for a few minutes and </span>
-                <span className='link-primary' style={{cursor:'pointer'}} onClick={sendOTP}>try again</span>
+                <span className='link-primary' style={{cursor:(otpRetry) ? 'pointer' : 'not-allowed'}} onClick={sendOTP}>
+                    {otpRetry ? 'try again' : `try again in ${reSec} seconds`}
+                </span>
             </div>
             <div className='mt-4 login-pbtn'>
                 <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
-                <button className='ms-3 pbtn-2' name='Next' onClick={otpVerify}>Verify</button>
+                <button className='ms-3 pbtn-2' name='Next' onClick={otpSubmit}>Verify</button>
             </div>
         </>
     )

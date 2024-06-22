@@ -20,10 +20,10 @@ def send_otp_to(email):
     # Email Contents
     email_msg = f"""From: Microsoup Authenticator {sender}
     
-To: {receiver}
-Subject: {subject}\n
-{body}
-"""
+    To: {receiver}
+    Subject: {subject}\n
+    {body}
+    """
     #Email Server
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()

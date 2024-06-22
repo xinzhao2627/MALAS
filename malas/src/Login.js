@@ -39,14 +39,36 @@ function Login (){
   // SUBMIT SECTION
   const handleChangeUser = (e) => {set_user_name(e.target.value)}
   const handleChangePassword = (e) => {set_password(e.target.value)}
-  const upload_transaction = (stat) => {
+  const upload_transaction = async (stat, e) => {
     setIsPlaying(false)
     setTransac_status(stat)
+    e.preventDefault()
+    const ex = {user_name, elapsedTime, transac_status}
+    const option  = {
+      method: "POST",
+      headers: {
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify(ex),
+      prompt_phase: prompt_phase
+    }
+    try{
+      const response = await fetch("/uploadTransaction", option)
     
+      const mes = await response.json()
+      
+      alert(mes.message)
+      
+      if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
+        window.location.reload()
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      alert('An error occurred while processing your request.');
+    }
   }
-  const backSubmit = (e) => {
-    upload_transaction(false)
-    window.location.reload()
+  const backSubmit = async (e) => {
+    upload_transaction(false, e)
   }
   
 // Prompt phase 1 = username
@@ -155,9 +177,30 @@ function Login (){
     </>
   )
 
-  const auth_button = (e) => {
+  const auth_button = async (e) => {
     if (e.target.id === 'OTP') set_prompt_phase(3);
-    else if (e.target.id === 'CCD') set_prompt_phase(4);
+    else if (e.target.id === 'CCD') {
+      // retrieve the ccd from backend to here
+      e.preventDefault()
+      const ex = {user_name}
+      const option  = {
+        method: "POST",
+        headers: {
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify(ex),
+        prompt_phase: prompt_phase
+      }
+      const response = await fetch("/retrieveccd", option)
+      const mes = await response.json()
+      alert(mes.message)
+
+      if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
+        setColorData(mes.colorData)
+        set_prompt_phase(4)
+      }
+    }
+      
   }
 
   const enter_auth = (
@@ -201,34 +244,33 @@ function Login (){
       setOtpRetry(e)
     }
     
-    // e.preventDefault()
-    // const ex = {user_name}
-    // const option  = {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type":"application/json"
-    //   },
-    //   body: JSON.stringify(ex),
-    //   prompt_phase: prompt_phase
-    // }
-    // const response = await fetch("/lsotp", option)
-    // const mes = await response.json()
-    // alert(mes.message)
+    e.preventDefault()
+    const ex = {user_name}
+    const option  = {
+      method: "POST",
+      headers: {
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify(ex),
+      prompt_phase: prompt_phase
+    }
+    const response = await fetch("/lsotp", option)
+    const mes = await response.json()
+    alert(mes.message)
 
-    // if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
-    //   s_retrieved_OTP(mes.code)
-    //   console.log(retrieved_OTP)
-    //   set_prompt_phase(3.5)
-    // }
+    if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
+      s_retrieved_OTP(mes.code)
+      console.log(retrieved_OTP)
+      set_prompt_phase(3.5)
+    }
   }
 
   const handleOTPChange = (e) => {
     s_f_OTP(e.target.value)
   }
-  const otpSubmit = () => {
-    // TODO: upload transaction true or false 
-
+  const otpSubmit = (e) => {
     if (f_OTP === retrieved_OTP){
+      upload_transaction(e)
       navigate('/')
     } else {
       alert('incorrect OTP')
@@ -244,11 +286,11 @@ function Login (){
       <span>We emailed the code to {user_name}. Please enter the code to sign-in</span>
       <input className='login-header-input mt-3' type='number' value={f_OTP} onChange={handleOTPChange}/>
       <div className='mt-4'>
-                <span>Didn't received it? please wait for a few minutes and </span>
-                <span className='link-primary' style={{cursor:(otpRetry) ? 'pointer' : 'not-allowed'}} onClick={sendOTP}>
-                  {otpRetry ? 'try again' : `try again in ${reSec} seconds`}
-                </span>
-            </div>
+          <span>Didn't received it? please wait for a few minutes and </span>
+          <span className='link-primary' style={{cursor:(otpRetry) ? 'pointer' : 'not-allowed'}} onClick={sendOTP}>
+            {otpRetry ? 'try again' : `try again in ${reSec} seconds`}
+          </span>
+      </div>
       <div className='mt-4 login-pbtn'>
         <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
         <button className='ms-3 pbtn-2' name='Next' onClick={otpSubmit}>Sign in</button>
@@ -329,7 +371,6 @@ function Login (){
                       const attempt = prev + 1
                       if (attempt >= 3) {
                           backSubmit()
-                          // TODO await upload transaction 
                           return 0
                       }
 
