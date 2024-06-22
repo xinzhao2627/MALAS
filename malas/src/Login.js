@@ -24,13 +24,13 @@ function Login (){
   const getPic = () => {return pics[Math.floor(Math.random() * pics.length)]}
   const stopwatch = useStopwatch()
 
-  const testing_ccd_data = {
+  const [colorData, setColorData] = useState({
     squirtle: { hex: "#A1D9EF" },
     charmander: { hex: "#EA8B24" },
     bulbasaur: { hex: "#7fcaac" },
     pikachu: { hex: "#f7df2c" },
     eevee: { hex: "#c48d50" }
-  }
+  }) 
 
   // SUBMIT SECTION
   const handleChangeUser = (e) => {set_user_name(e.target.value)}
@@ -240,7 +240,7 @@ function Login (){
     <>
       <span>{user_name}</span>
       <h3 className='login-header-label mt-3'>CCD</h3>
-      <CCD colorData = {testing_ccd_data} ccdProceed={ccdProceed} setCcdProceed={setCcdProceed} />
+      <CCD colorData = {colorData} ccdProceed={ccdProceed} setCcdProceed={setCcdProceed} items={3} />
       <div className='login-reg-prompt mt-3'>
         <button className='link-primary' style={{border:'none', cursor:'pointer', backgroundColor:'transparent'}}>
           Use your password instead

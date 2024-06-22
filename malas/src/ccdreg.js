@@ -5,8 +5,7 @@ import 'bootstrap/dist/js/bootstrap.min.js';
 import './App.css';
 import React, { useState} from 'react';
 
-export default function CCD({colorData, ccdProceed, setCcdProceed, items}) {
-    const ret_data = colorData
+export default function RegCCD({setCcdProceed, items, setColorData}) {
     const [colors, setColors] = useState(Array(items).fill("turquoise"));
     const [inputs, setInputs] = useState(Array.from({ length: items }, (x, i) => 'CCD at ' + (i + 1)));
     const [target, setTarget] = useState(0);
@@ -34,22 +33,29 @@ export default function CCD({colorData, ccdProceed, setCcdProceed, items}) {
         );
     };
 
-    const colorBlur = (e, i) => {
-        if (ret_data.hasOwnProperty(e.target.value)) {
-            const newColor = ret_data[e.target.value].hex; // Extract the hex value
-            const update = colors.map((c, j) => (j === i ? newColor : c));
-            setColors(update);
-        }
-        console.log(ret_data.hasOwnProperty(e.target.value));
-    };
-
     const handleSave = (e) => {
+
+        // check each color if different
         const uniqueColors = new Set(colors);
         const allUnique = uniqueColors.size === colors.length;
-        if (allUnique){
-            const colorValues = Object.values(colorData).map(c => c.hex.toLowerCase())
-            const isAllColors = colors.every(color => colorValues.includes(color.toLowerCase()))
+
+        // check each alias if different
+        const uniqueKeys = new Set(inputs)
+        const allUniqueKey = uniqueKeys.size === inputs.length
+
+        if (allUnique && allUniqueKey){
+
+            // check each input not null
+            const isAllColors = inputs.every(inp => inp !== null)
+
             if (isAllColors) {
+
+                // store each data into the dictionary
+                const s = {}
+                inputs.forEach((inp, i) => {
+                    s[inp] = {hex: colors[i]}
+                })
+                setColorData(s)
                 setCcdProceed(true)
                 alert('All colors are in the dictionary')
             } else {
@@ -75,7 +81,6 @@ export default function CCD({colorData, ccdProceed, setCcdProceed, items}) {
                                     className="card-title"
                                     placeholder={inputs[i]}
                                     onChange={(e) => setValue(e, i)}
-                                    onBlur={(e) => colorBlur(e, i)}
                                 />
                             </div>
                             <div className="card-time">{i + 1}</div>

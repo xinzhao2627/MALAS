@@ -1,14 +1,18 @@
 import './App.css';
 import React, {useState, useRef } from 'react'
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import SliderCaptcha from 'rc-slider-captcha'
 import createPuzzle from 'create-puzzle'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import "react-datepicker/dist/react-datepicker.css";
 import 'bootstrap/dist/js/bootstrap.min.js'
+import RegCCD from './ccdreg'
 
 
 function Register () {
+    const [ccdProceed, setCcdProceed] = useState(false)
+    const [colorData, setColorData] = useState() 
+    const navigate = useNavigate();
     const [f_email, s_f_email] = useState('')
     const [f_ps, s_f_ps] = useState('')
     const [reg_phase, s_reg_phase] = useState(1)
@@ -195,7 +199,34 @@ function Register () {
             </div>
         </>
     )
+    const ccdSubmit = (e) => {
+        if (ccdProceed){
+
+            // TODO login 
+
+            alert('login successful')
+            navigate('/')
+        } else {
+            alert('error on ccd color/key selection')
+        }
+    }
     
+    const enter_ccd = (
+    <>
+        <span>{f_email}</span>
+        <h3 className='login-header-label mt-3'>CCD</h3>
+        <RegCCD setCcdProceed={setCcdProceed} items={3} setColorData={setColorData}/>
+        <div className='login-reg-prompt mt-3'>
+        <button className='link-primary' style={{border:'none', cursor:'pointer', backgroundColor:'transparent'}}>
+            Use your password instead
+        </button>
+        </div>
+        <div className='mt-4 login-pbtn'>
+        <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
+        <button className='ms-3 pbtn-2' name='Next' onClick={ccdSubmit}>Sign in</button>
+        </div>
+    </>
+    )
     return (
         <div className='login-section App-header'>
             <div className="login-box px-5 pb-2" style={(reg_phase===5) ? {width:'600px', height:'400px'} : null }>
@@ -211,6 +242,10 @@ function Register () {
                             ? create_password 
                         : reg_phase === 3
                             ? bot_recognition
+                        : reg_phase === 4
+                            ? otp_page
+                        : reg_phase === 5
+                            ? enter_ccd
                             : null
                     )}
                 </div>
