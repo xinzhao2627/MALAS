@@ -5,11 +5,7 @@ import time
 
 # Send email OTP
 def send_otp_to(email):
-    key = "Oursupersecretkeythatnooneexceptourmembersshouldknow"
-    totp = pyotp.TOTP(key, interval=30) # OTP Generator (Will generate new code every 30 seconds)
-    otp_now = totp.now() #Get an otp
-    #This is the timer function running on another thread (tldr: The timer runs while the program takes input of user)
-    timer = threading.Thread(target=timer, daemon=True, args=(30,))
+    
     
     sender = "microsoupauth1@gmail.com" #Email that will send OTP to users
     password = "nalkskdistadmrpc" # Password of the OTP Sender
@@ -59,7 +55,11 @@ def otp_checker(otp_input):
 #         time_remaining = totp.interval - (time.time() % totp.interval)
 #         print(time_remaining)
 #         time.sleep(1)
-
+key = "Oursupersecretkeythatnooneexceptourmembersshouldknow"
+totp = pyotp.TOTP(key, interval=30) # OTP Generator (Will generate new code every 30 seconds)
+otp_now = totp.now() #Get an otp
+#This is the timer function running on another thread (tldr: The timer runs while the program takes input of user)
+timer = threading.Thread(target=timer, daemon=True, args=(30,))
 
 
 
