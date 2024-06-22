@@ -42,6 +42,7 @@ function Login (){
   const upload_transaction = (stat) => {
     setIsPlaying(false)
     setTransac_status(stat)
+    
   }
   const backSubmit = (e) => {
     upload_transaction(false)
