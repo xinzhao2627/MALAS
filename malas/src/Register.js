@@ -38,9 +38,10 @@ function Register () {
     const handleOtpChange = (e) => {s_f_OTP(e.target.value)}
     const showPassword = () => {setPasswordVisibility(!passwordVisibility)}
     const verifyNewEmail = async (e) => {
+        console.log('inside')
         if (regex.test(f_email) || f_email === null){
+            console.log('log')
             alert("Email has special or is null")
-
         } else {
             e.preventDefault()
             const ex = {f_email}
@@ -57,8 +58,8 @@ function Register () {
             alert(mes.message)
             if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
                 alert('The email is usable, otp sent')
-                s_retrieved_OTP(mes.code)
-                console.log('code: ' + retrieved_OTP)
+                s_retrieved_OTP(parseInt(mes.code))
+                console.log('code: ' + mes.code)
                 if (reg_phase === 1) reg_phase(2)
             }
             else {
@@ -104,16 +105,19 @@ function Register () {
     };
 
     const sendOTP = async (e) => {
+        console.log('clicked')
         handleStartTimer_reSend()
         setOtpRetry(e)
         verifyNewEmail(e)
     }
 
     const otpSubmit = () => {
-        let otpVal = f_OTP === retrieved_OTP
+        let otpVal = f_OTP == retrieved_OTP
         if (otpVal){
-            s_reg_phase(2.1)
+            alert(true)
+            // s_reg_phase(2.1)
         } else {
+            console.log(f_OTP+ ' and ' + retrieved_OTP)
             alert('incorrect OTP')
         }
         
@@ -123,7 +127,7 @@ function Register () {
             <span>{f_email}</span>
             <h3 className='login-header-label mt-3'> Enter code</h3>
             <span>We just sent a code to {f_email}</span>
-            <input className='login-header-input mt-3' type='number' onChange={handleOtpChange} value={f_OTP}/>
+            <input className='login-header-input mt-3' type='text' onChange={handleOtpChange} value={f_OTP}/>
             <div className='mt-4'>
                 <span>Didn't received it? please wait for a few minutes and </span>
                 <span className='link-primary' style={{cursor:(otpRetry) ? 'pointer' : 'not-allowed'}} onClick={sendOTP}>

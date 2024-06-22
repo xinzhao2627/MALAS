@@ -5,8 +5,6 @@ import time
 
 # Send email OTP
 def send_otp_to(email):
-    
-    
     sender = "microsoupauth1@gmail.com" #Email that will send OTP to users
     password = "nalkskdistadmrpc" # Password of the OTP Sender
     receiver = email # User's email
@@ -16,10 +14,10 @@ def send_otp_to(email):
     # Email Contents
     email_msg = f"""From: Microsoup Authenticator {sender}
     
-    To: {receiver}
-    Subject: {subject}\n
-    {body}
-    """
+To: {receiver}
+Subject: {subject}\n
+{body}
+"""
     #Email Server
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
@@ -31,11 +29,10 @@ def send_otp_to(email):
     # Send OTP to receiver
     server.sendmail(sender, receiver, email_msg)
     print("Email has been sent!")
-    return otp_now
 
 def timer(set_timer):
-    for x in range(0, 30):
-        print(set_timer)
+    for x in range(0, 60):
+        print(set_timer, ' ', otp_now)
         set_timer = set_timer - 1
         time.sleep(1)
     

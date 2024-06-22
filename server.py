@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, session, redirect
 from database import Query_pr, Query, email_in_db
-import otp
 
+import threading
 app = Flask(__name__)
 
 
@@ -62,7 +62,7 @@ def lsotp():
         
         
         
-        code = otp.send_otp_to("xinzhao2627@gmail.com")
+        code = send_otp_to("xinzhao2627@gmail.com")
         
         
         
@@ -84,25 +84,19 @@ def lvccd():
 
 ############ REGIUSTER #########
 
-@app.route('/regVerifyEmail', methods = ['POST'])
+@app.route('/regVerifyEmail', methods=['POST'])
 def regVerifyEmail():
-    t = "user" ; s = "register email"
-    
-    # use request.json to get data from frontend
-    data = request.json 
-    u = data.get('f_email')
-    
-    # dict content
-    # emdb = Query_pr("SELECT name FROM %s WHERE name = %s", (t, u))
-    
-    
-    # if emdb: return jsonify(aexer(s)),400
-    
-    # TODO send otp
-    code = otp.send_otp_to("xinzhao2627@gmail.com")
-    print('THIS IS THE CODE: ', code)
-    return jsonify({"message":f"code sent to {u}", "proceed":True, "code":code}),200
-
+    from testing import send_otp_to
+    t = "user"
+    s = "register email"
+    try:
+        data = request.json
+        u = 'rainnandmont@gmail.com'
+        
+        code = send_otp_to(u)
+        return jsonify({"message": f"Code sent to {u}", "proceed": True, "code": int(code)}), 200
+    except Exception as e:
+        return jsonify(err(s, e)), 400
 @app.route('/regFinalize', methods = ['POST'])
 def regFinalize():
     t = "ccd" ; s = "reg ccd"
