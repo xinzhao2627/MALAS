@@ -14,8 +14,8 @@ function Register () {
     const [ccdProceed, setCcdProceed] = useState(false)
     const [colorData, setColorData] = useState() 
     const navigate = useNavigate();
-    const [f_email, s_f_email] = useState('')
-    const [f_ps, s_f_ps] = useState('')
+    const [f_email, s_f_email] = useState("")
+    const [f_ps, s_f_ps] = useState("")
     const [reg_phase, s_reg_phase] = useState(4)
     const [passwordVisibility, setPasswordVisibility] = useState(false)
     const [f_OTP, s_f_OTP] = useState(0)
@@ -38,9 +38,7 @@ function Register () {
     const handleOtpChange = (e) => {s_f_OTP(e.target.value)}
     const showPassword = () => {setPasswordVisibility(!passwordVisibility)}
     const verifyNewEmail = async (e) => {
-        console.log('inside')
-        if (regex.test(f_email) || f_email === null){
-            console.log('log')
+        if (regex.test(f_email) || f_email.length === 0){
             alert("Email has special or is null")
         } else {
             e.preventDefault()
@@ -58,7 +56,7 @@ function Register () {
             alert(mes.message)
             if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
                 alert('The email is usable, otp sent')
-                s_retrieved_OTP(parseInt(mes.code))
+                s_retrieved_OTP(mes.code)
                 console.log('code: ' + mes.code)
                 if (reg_phase === 1) reg_phase(2)
             }
@@ -112,7 +110,7 @@ function Register () {
     }
 
     const otpSubmit = () => {
-        let otpVal = f_OTP == retrieved_OTP
+        let otpVal = f_OTP === retrieved_OTP
         if (otpVal){
             alert(true)
             // s_reg_phase(2.1)
@@ -214,7 +212,6 @@ function Register () {
                             const attempt = prev + 1
                             if (attempt >= 3) {
                                 window.location.reload()
-                                // TODO: upload transaction iff true
                                 return 0
                             }
 

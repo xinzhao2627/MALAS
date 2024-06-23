@@ -43,7 +43,8 @@ function Login (){
     setIsPlaying(false)
     setTransac_status(stat)
     e.preventDefault()
-    const ex = {user_name, elapsedTime, transac_status}
+    const transac_type = 1
+    const ex = {user_name, elapsedTime, transac_status, transac_type}
     const option  = {
       method: "POST",
       headers: {
@@ -150,7 +151,6 @@ function Login (){
       const response = await fetch("/lgpv", option)
       const mes = await response.json()
       alert(mes.message)
-
       if (mes.proceed === true && (response.status === 200 || response.status === 201)) set_prompt_phase(2.1)
     }
     else alert("Invalid entry on password section")
@@ -271,6 +271,7 @@ function Login (){
   const otpSubmit = (e) => {
     if (f_OTP === retrieved_OTP){
       upload_transaction(e)
+      alert('login complete, transaction uploaded')
       navigate('/')
     } else {
       alert('incorrect OTP')

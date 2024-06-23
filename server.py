@@ -21,8 +21,10 @@ def veripass():
         ps = data.get("password")
         u = data.get("user_name")
         
-        
+        # CONVERT: this just verify if the password {ps} of user {u} is correct
         ups = Query_pr("SELECT password FROM %s WHERE user_password = %s and user_email = %s", (t, ps, u))
+        # TODO: replace the above, return a row in ups that has only 1 row and 1 column, which is the password {ps} of user {u}
+        
         
         # turn into json and send it to frontend
         return jsonify(dne(s)), 400 if not ups else jsonify(inv(s)), 400 if ups[0][0] != ps else jsonify(proc(s)), 200
@@ -32,6 +34,8 @@ def veripass():
 
 @app.route('/received',methods = ['POST'])
 def received():
+    
+    # t is the table name
     t = "user" ; s = "Email"
     try:
         data = request.json  # get data from client
@@ -39,11 +43,14 @@ def received():
         
         
         if not user_email: return  jsonify(inv(s)),400
+        
+        # CONVERT TODO: this, return 1 row and 1 column that contains the email of user {u}
         rows = Query(f"SELECT user_email from {t} WHERE user_email = '{user_email}'")
+        
+        # if there is no user with that name return Does Not Exist
         if not rows: return jsonify(dne(s)),400
         
-        
-        #TODO Query_pr("INSERT INTO %s(userName, numberName) VALUES(%s, %s)", (t, user_email, 20))
+
         
         # return the username into the frontend after verification
         return jsonify(proc(s)),200
@@ -52,19 +59,19 @@ def received():
     
 @app.route('/lsotp', methods = ['POST'])    
 def lsotp():
+    from testing import send_otp_to
     t = "user" ; s = "sendOTP" ; l = 5
     try:
         data = request.json 
         u = data.get("user_name")
-        # if not u: return jsonify(inv(s)), 400
-        # rows = Query_pr("SELECT name from %s WHERE name = %s", (t, u))
-        # if not rows: return jsonify(dne(s)), 400
+        
+        if not u: return jsonify(inv(s)), 400
+        rows = Query_pr("SELECT name from %s WHERE name = %s", (t, u))
+        if not rows: return jsonify(dne(s)), 400
         
         
         
-        code = send_otp_to("xinzhao2627@gmail.com")
-        
-        
+        code = send_otp_to(u)
         
         return jsonify({"message":f"code sent to {u}", "proceed":True, "code":code}),200
     except Exception as e:
@@ -72,13 +79,23 @@ def lsotp():
 
 @app.route('/retrieveccd', methods = ['POST'])    
 def lvccd():
-    t = "user" ; s = "verifyOTP" ; l = 5
+    t = "ccd" ; s = "verifyOTP" ; l = 5
     try:
-        # get the ccd
-        # query pr
+        data = request.json
+        u = data.get('user_name')
+        # CONVERT TODO: make a query function that returns a dictionary, 
+        # containing the 5 colors of user {u}
+        # return: {
+            # 'alias1': {'hex': '#FFFFFF'},
+            # 'alias2': {'hex': '#EEEEEE'},
+            # 'bulbasaur': {'hex': '#EEEEEE'},
+            # 'charmander': {'hex': '#EEEEEE'},
+            # 'cherry': {'hex': '#E4E4E4'}
+            # }
+        # return it in colorData
+        colorData = None
         
-        
-        return jsonify({"message":f"code sent to ", "proceed":True, "code":code}),200
+        return jsonify({"message":f"code sent to ", "proceed":True, "code":colorData}),200
     except Exception as e:
         return jsonify(err(s, e)),400
 
@@ -91,26 +108,39 @@ def regVerifyEmail():
     s = "register email"
     try:
         data = request.json
-        u = 'rainnandmont@gmail.com'
+        u = data.get('f_email')
+        
+        # TODO verify if {u} is on the database
+        if not u: return jsonify(inv(s)), 400
+        rows = Query_pr("SELECT name from %s WHERE name = %s", (t, u))
+        if not rows: return jsonify(dne(s)), 400
         
         code = send_otp_to(u)
-        return jsonify({"message": f"Code sent to {u}", "proceed": True, "code": int(code)}), 200
+        return jsonify({"message": f"Code sent to {u}", "proceed": True, "code": code}), 200
     except Exception as e:
         return jsonify(err(s, e)), 400
-@app.route('/regFinalize', methods = ['POST'])
+    
+    
+@app.route('/regFinalize', methods=['POST'])
 def regFinalize():
-    t = "ccd" ; s = "reg ccd"
+    t = "ccd"
+    s = "reg ccd"
     try:
         data = request.json
-        ucol = data.get('colors')
+        color_data = data.get('colorData')
+
+        if not color_data:
+            return jsonify(inv("colorData")), 400
         
-        #TODO  add ccd
-        for col in ucol:
-            Query_pr("INSERT INTO %s(color) VALUES(%s)", (t, col))
-        
-        return jsonify(proc(s)),200 
+        for key, value in color_data.items():
+            hex_value = value.get('hex')
+            if hex_value:
+                Query_pr("INSERT INTO %s(color) VALUES(%s)", (t, hex_value))
+
+        return jsonify(proc(s)), 200 
     except Exception as e:
-        return jsonify(err(s, e)),400
+        return jsonify(err(s, e)), 400
+
     
 # UPLOAD TRANSACTION
 @app.route('/uploadTransaction', methods = ['POST'])
@@ -119,20 +149,58 @@ def uploadTransaction():
     
     try:
         data = request.json
+        
         t_email = data.get('user_name')
         t_stat = data.get('transac_status')
         t_elapsed = data.get('elapsedTime')
+        t_type = data.get('transac_type')
         
-        # TODO upload to transaction
+        # CONVERT TODO: upload to transaction: the 4 columns above are the parameters 
+        #
         
         
-        
-        print(t_email, ' ', t_elapsed, ' ', t_stat)
+        print(t_email, ' ', t_elapsed, ' ', t_stat, ' ', t_type)
         
         return jsonify(proc(s)), 200
     except Exception as e:
         return jsonify(err(s, e)), 400
-    
+
+##### RESETPASSWORD #####
+@app.route('/resetAccEmail', methods = ['POST'])    
+def resetAccEmail():
+    from testing import send_otp_to
+    t = "user" ; s = "sendOTP"
+    try:
+        data = request.json 
+        u = data.get("user_name")
+        if not u: return jsonify(inv(s)), 400
+        rows = Query_pr("SELECT name from %s WHERE name = %s", (t, u))
+        if not rows: return jsonify(dne(s)), 400
+        
+        code = send_otp_to(u)
+        
+        return jsonify({"message":f"code sent to {u}", "proceed":True, "code":code}),200
+    except Exception as e:
+        return jsonify(err(s, e)),400
+
+@app.route('/resetNewPass', methods = ['POST'])    
+def resetNewPass():
+    t = "user" ; s = "sendOTP"
+    try:
+        data = request.json 
+        u = data.get("user_name")
+        ps = data.get("password")
+        
+        
+        if not u: return jsonify(inv(s)), 400
+        rows = Query_pr("SELECT name from %s WHERE name = %s", (t, u))
+        if not rows: return jsonify(dne(s)), 400
+        
+        # CONVERT TODO: change user {u}'s password into the new one which is ps password {ps}
+        
+        return jsonify(proc(s)),200
+    except Exception as e:
+        return jsonify(err(s, e)),400
 
 if __name__ == "__main__":
     app.run(debug=True)
