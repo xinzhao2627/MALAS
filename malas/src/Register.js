@@ -16,7 +16,7 @@ function Register () {
     const navigate = useNavigate();
     const [f_email, s_f_email] = useState("")
     const [f_ps, s_f_ps] = useState("")
-    const [reg_phase, s_reg_phase] = useState(4)
+    const [reg_phase, s_reg_phase] = useState(1)
     const [passwordVisibility, setPasswordVisibility] = useState(false)
     const [f_OTP, s_f_OTP] = useState(0)
     const [captchaAttempt, s_captchaAttempt] = useState(0)
