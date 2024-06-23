@@ -63,3 +63,19 @@ def Query(query):
     cnx.commit()
     cur.close()
     return rows
+
+def get_color(user):
+    data = Query("SELECT `color`, `alias` FROM `ccd` WHERE `user_email` LIKE '" + user + "'")
+
+    colors = {}
+
+    for i in range(len(data)):
+        colors[data[i][1]] = {"hex": data[i][0]}
+
+    return colors
+
+def add_transaction(t_email, t_elapse, t_stat, t_type):
+    Query_pr("INSERT INTO `transaction`(`user_email`, `elapse_time`, `transac_status`, `transac_type`) VALUES ( %s, %s, %s, %s)", (t_email, t_elapse, t_stat, t_type))
+
+def change_password(user, new_password):
+    Query_pr("UPDATE `user` SET `user_password`= %s WHERE `user_email` LIKE %s", (new_password, user))

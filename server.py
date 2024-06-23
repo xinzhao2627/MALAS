@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, session, redirect
-from database import Query_pr, Query, email_in_db
+from database import *
 
 import threading
 app = Flask(__name__)
@@ -45,7 +45,7 @@ def received():
         if not user_email: return  jsonify(inv(s)),400
         
         # CONVERT TODO: this, return 1 row and 1 column that contains the email of user {u}
-        rows = Query(f"SELECT user_email from {t} WHERE user_email = '{user_email}'")
+        rows = Query(f"SELECT user_email from {t} WHERE user_email = {user_email}")
         
         # if there is no user with that name return Does Not Exist
         if not rows: return jsonify(dne(s)),400
@@ -83,7 +83,7 @@ def lvccd():
     try:
         data = request.json
         u = data.get('user_name')
-        # CONVERT TODO: make a query function that returns a dictionary, 
+        # (DONE) CONVERT TODO: make a query function that returns a dictionary, 
         # containing the 5 colors of user {u}
         # return: {
             # 'alias1': {'hex': '#FFFFFF'},
@@ -93,7 +93,8 @@ def lvccd():
             # 'cherry': {'hex': '#E4E4E4'}
             # }
         # return it in colorData
-        colorData = None
+
+        colorData = get_color(u)
         
         return jsonify({"message":f"code sent to ", "proceed":True, "code":colorData}),200
     except Exception as e:
@@ -155,9 +156,9 @@ def uploadTransaction():
         t_elapsed = data.get('elapsedTime')
         t_type = data.get('transac_type')
         
-        # CONVERT TODO: upload to transaction: the 4 columns above are the parameters 
-        #
-        
+        # (DONE) CONVERT TODO: upload to transaction: the 4 columns above are the parameters 
+
+        add_transaction(t_email, t_elapsed, t_stat, t_type)
         
         print(t_email, ' ', t_elapsed, ' ', t_stat, ' ', t_type)
         
@@ -188,15 +189,17 @@ def resetNewPass():
     t = "user" ; s = "sendOTP"
     try:
         data = request.json 
-        u = data.get("user_name")
+        u = data.get("user_name") #P.S. must return user_email
         ps = data.get("password")
         
         
         if not u: return jsonify(inv(s)), 400
-        rows = Query_pr("SELECT name from %s WHERE name = %s", (t, u))
+        rows = Query_pr("SELECT user_email from %s WHERE user_email LIKE %s", (t, u))
         if not rows: return jsonify(dne(s)), 400
         
-        # CONVERT TODO: change user {u}'s password into the new one which is ps password {ps}
+        # (DONE) CONVERT TODO: change user {u}'s password into the new one which is ps password {ps}
+
+        change_password(u, ps)
         
         return jsonify(proc(s)),200
     except Exception as e:
