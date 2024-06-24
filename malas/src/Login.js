@@ -10,7 +10,6 @@ import {useMomentaryBool} from "react-use-precision-timer";
 import {useElapsedTime} from "use-elapsed-time"
 
 function Login (){
-  const [transac_status, setTransac_status] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const {elapsedTime} = useElapsedTime({ isPlaying })
   const [ccdProceed, setCcdProceed] = useState(false)
@@ -22,7 +21,6 @@ function Login (){
   const [retrieved_OTP, s_retrieved_OTP] = useState(0)
   const [keytp, set_keytp] = useState('')
   const [f_OTP, s_f_OTP] = useState(0)
-  const retrieved_user = "testing@gmail.com"
   const pics = ['/images/captchaP/mooP.jpg', '/images/captchaP/iniP.jpg', '/images/captchaP/picP.jpg']
   const getPic = () => {return pics[Math.floor(Math.random() * pics.length)]}
   const [otpRetry, setOtpRetry] = useMomentaryBool(true, 30000)
@@ -41,17 +39,15 @@ function Login (){
   const handleChangePassword = (e) => {set_password(e.target.value)}
   const upload_transaction = async (stat, e) => {
     setIsPlaying(false)
-    setTransac_status(stat)
-    e.preventDefault()
+    
     const transac_type = 1
-    const ex = {user_name, elapsedTime, transac_status, transac_type}
+    const ex = {user_name, elapsedTime, stat, transac_type}
     const option  = {
       method: "POST",
       headers: {
         "Content-Type":"application/json"
       },
-      body: JSON.stringify(ex),
-      prompt_phase: prompt_phase
+      body: JSON.stringify(ex)
     }
     try{
       const response = await fetch("/uploadTransaction", option)
@@ -90,8 +86,7 @@ function Login (){
         headers: {
           "Content-Type":"application/json"
         },
-        body: JSON.stringify(ex),
-        prompt_phase: prompt_phase
+        body: JSON.stringify(ex)
       }
       try{
         const response = await fetch("/received", option)
@@ -137,7 +132,7 @@ function Login (){
 
 
   const passwordSubmit = async (e) => {
-    if (password !== null || user_name !== null){
+    if (password.length !== 0){
       e.preventDefault()
       const ex = {password, user_name}
       const option  = {
@@ -145,8 +140,7 @@ function Login (){
         headers: {
           "Content-Type":"application/json"
         },
-        body: JSON.stringify(ex),
-        prompt_phase: prompt_phase
+        body: JSON.stringify(ex)
       }
       const response = await fetch("/lgpv", option)
       const mes = await response.json()
@@ -161,7 +155,7 @@ function Login (){
   const enter_password = (
     <>
       <div className='mt-4'>
-        <span >{retrieved_user}</span>
+        <span >{user_name}</span>
       </div>
       <h3 className='login-header-label mt-3'> Enter password</h3>
       <input className='login-header-input mt-3' type='password' placeholder='Password' value={password}  onChange={handleChangePassword}/>
@@ -188,8 +182,7 @@ function Login (){
         headers: {
           "Content-Type":"application/json"
         },
-        body: JSON.stringify(ex),
-        prompt_phase: prompt_phase
+        body: JSON.stringify(ex)
       }
       const response = await fetch("/retrieveccd", option)
       const mes = await response.json()
@@ -197,6 +190,7 @@ function Login (){
 
       if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
         setColorData(mes.colorData)
+        console.log(mes.colorData)
         set_prompt_phase(4)
       }
     }
@@ -251,8 +245,7 @@ function Login (){
       headers: {
         "Content-Type":"application/json"
       },
-      body: JSON.stringify(ex),
-      prompt_phase: prompt_phase
+      body: JSON.stringify(ex)
     }
     const response = await fetch("/lsotp", option)
     const mes = await response.json()
@@ -304,11 +297,6 @@ function Login (){
         <span>{user_name}</span>
         <h3 className='login-header-label mt-3'> Sign in</h3>
         <span>We'll send a code to {user_name} to sign you in.</span>
-        <div className='login-reg-prompt mt-3'>
-          <span className='link-primary' style={{cursor:'pointer'}}>
-            Code 
-          </span>
-        </div>
         <div className='mt-4 login-pbtn'>
           <button className='pbtn-1' name='Back' onClick={backSubmit}>Back</button>
           <button className='ms-3 pbtn-2' name='Next' onClick={sendOTP}>Send code</button>
@@ -319,7 +307,7 @@ function Login (){
   const ccdSubmit = (e) => {
     if (ccdProceed){
       alert('login successful')
-      upload_transaction(true)
+      upload_transaction(true, e)
       navigate('/')
     }
   }

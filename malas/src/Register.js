@@ -18,9 +18,9 @@ function Register () {
     const [f_ps, s_f_ps] = useState("")
     const [reg_phase, s_reg_phase] = useState(1)
     const [passwordVisibility, setPasswordVisibility] = useState(false)
-    const [f_OTP, s_f_OTP] = useState(0)
+    const [f_OTP, s_f_OTP] = useState('')
     const [captchaAttempt, s_captchaAttempt] = useState(0)
-    const [retrieved_OTP, s_retrieved_OTP] = useState(0)
+    const [retrieved_OTP, s_retrieved_OTP] = useState('')
     const [reSec,setReSec] = useState(0)
     const regex = /[!#$%^&*()\-+={}[\]:;"'<>,?\/|\\]/;
     const format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
@@ -38,34 +38,32 @@ function Register () {
     const handleOtpChange = (e) => {s_f_OTP(e.target.value)}
     const showPassword = () => {setPasswordVisibility(!passwordVisibility)}
     const verifyNewEmail = async (e) => {
-        if (regex.test(f_email) || f_email.length === 0){
-            alert("Email has special or is null")
+        if (regex.test(f_email) || f_email.length === 0 || !(f_email.includes("@gmail.com"))){
+            alert("Invalid email");
         } else {
-            e.preventDefault()
-            const ex = {f_email}
+            e.preventDefault();
+            const ex = { f_email };
             const option  = {
-              method: "POST",
-              headers: {
-                "Content-Type":"application/json"
-              },
-              body: JSON.stringify(ex),
-              reg_phase: reg_phase
-            }
-            const response = await fetch("/regVerifyEmail", option)
-            const mes = await response.json()
-            alert(mes.message)
+                method: "POST",
+                headers: {
+                    "Content-Type":"application/json"
+                },
+                body: JSON.stringify(ex)
+            };
+            const response = await fetch("/regVerifyEmail", option);
+            const mes = await response.json();
+            alert(mes.message);
             if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
-                alert('The email is usable, otp sent')
-                s_retrieved_OTP(mes.code)
-                console.log('code: ' + mes.code)
-                if (reg_phase === 1) reg_phase(2)
-            }
-            else {
-              alert('This email cannot be used')
+                alert('The email is usable, otp sent');
+                s_retrieved_OTP(mes.code);
+                console.log('code: ' + mes.code);
+                if (reg_phase === 1) s_reg_phase(2);
+            } else {
+                alert('This email cannot be used');
             }
         }
-        
-    }
+    };
+    
 
     const create_account = (
         <>
@@ -113,7 +111,7 @@ function Register () {
         let otpVal = f_OTP === retrieved_OTP
         if (otpVal){
             alert(true)
-            // s_reg_phase(2.1)
+            s_reg_phase(2.1)
         } else {
             console.log(f_OTP+ ' and ' + retrieved_OTP)
             alert('incorrect OTP')
@@ -240,8 +238,7 @@ function Register () {
               headers: {
                 "Content-Type":"application/json"
               },
-              body: JSON.stringify(ex),
-              reg_phase: reg_phase
+              body: JSON.stringify(ex)
             }
             const response = await fetch("/regFinalize", option)
             const mes = await response.json()
@@ -262,7 +259,7 @@ function Register () {
     <>
         <span>{f_email}</span>
         <h3 className='login-header-label mt-3'>CCD</h3>
-        <RegCCD setCcdProceed={setCcdProceed} items={3} setColorData={setColorData}/>
+        <RegCCD setCcdProceed={setCcdProceed} items={5} setColorData={setColorData}/>
         <div className='login-reg-prompt mt-3'>
         <button className='link-primary' style={{border:'none', cursor:'pointer', backgroundColor:'transparent'}}>
             Use your password instead
@@ -276,7 +273,7 @@ function Register () {
     )
     return (
         <div className='login-section App-header'>
-            <div className="login-box px-5 pb-2" style={(reg_phase===5) ? {width:'600px', height:'400px'} : null }>
+            <div className="login-box px-5 pb-2" style={(reg_phase===4) ? {width:'800px', height:'850px'} : null }>
                 <div className='login-header-logo mb-2 '>
                     <NavLink to='/'>
                         <img src='/images/microsoft-seeklogo.jpg' alt='micros_logo' width="120px" height="25px"/>
@@ -290,8 +287,6 @@ function Register () {
                         : reg_phase === 3
                             ? bot_recognition
                         : reg_phase === 4
-                            ? otp_page
-                        : reg_phase === 5
                             ? enter_ccd
                             : null
                     )}

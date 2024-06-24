@@ -71,7 +71,7 @@ def get_color(user):
 
     for i in range(len(data)):
         colors[data[i][1]] = {"hex": data[i][0]}
-
+    print(colors)
     return colors
 
 def add_transaction(t_email, t_elapse, t_stat, t_type):
