@@ -6,6 +6,7 @@ import './App.css';
 import React, { useState} from 'react';
 
 export default function CCD({colorData, ccdProceed, setCcdProceed, items}) {
+    
     const ret_data = colorData
     const [colors, setColors] = useState(Array(items).fill("turquoise"));
     const [inputs, setInputs] = useState(Array.from({ length: items }, (x, i) => 'CCD at ' + (i + 1)));
@@ -64,6 +65,7 @@ export default function CCD({colorData, ccdProceed, setCcdProceed, items}) {
     const pbn = (count) => {
         const a = [];
         for (let i = 0; i < count; i++) {
+            
             a.push(
                 <div className="col-12 col-sm-6 col-md-6 p-1" key={i}>
                     <div className="card work" style={{ border: 'none', color: 'white', width: '100%' }}>
@@ -71,7 +73,7 @@ export default function CCD({colorData, ccdProceed, setCcdProceed, items}) {
                         <div className="card-desc">
                             <div className="card-header" style={{ padding: '0px', border: 'none', backgroundColor: 'transparent' }}>
                                 <input
-                                    type="password"
+                                    type="text"
                                     className="card-title"
                                     placeholder={inputs[i]}
                                     onChange={(e) => setValue(e, i)}

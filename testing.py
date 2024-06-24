@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO)
 def send_otp_to(email):
     try:
         # OTP generator
-        key = "Oursupersecretkeythatnooneexceptourmembersshouldknow"
+        key = pyotp.random_base32()
         totp = pyotp.TOTP(key)  # This will generate unique code every 30 seconds
 
         sender = "microsoupauth1@gmail.com"  # The email that will send OTP to users

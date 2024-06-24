@@ -6,8 +6,8 @@ import './App.css';
 import React, { useState} from 'react';
 
 export default function RegCCD({setCcdProceed, items, setColorData}) {
-    const [colors, setColors] = useState(Array(items).fill("turquoise"));
-    const [inputs, setInputs] = useState(Array.from({ length: items }, (x, i) => 'CCD at ' + (i + 1)));
+    const [colors, setColors] = useState(Array(items).fill(""));
+    const [inputs, setInputs] = useState(Array.from({ length: items }, () => ''));
     const [target, setTarget] = useState(0);
     const [col, setCol] = useColor("hex", "#FFFFFF");
     const [toggler, setToggler] = useState(false);
@@ -42,13 +42,15 @@ export default function RegCCD({setCcdProceed, items, setColorData}) {
         // check each alias if different
         const uniqueKeys = new Set(inputs)
         const allUniqueKey = uniqueKeys.size === inputs.length
-
+        
+        console.log(uniqueKeys)
         if (allUnique && allUniqueKey){
 
             // check each input not null
-            const isAllColors = inputs.every(inp => inp !== null)
-
-            if (isAllColors) {
+            const isAllColors = inputs.every(inp => inp !== '')
+            const isAllNotDefault = colors.every(co => co !== '')
+            console.log(isAllColors)
+            if (isAllColors && isAllNotDefault) {
 
                 // store each data into the dictionary
                 const s = {}
@@ -75,12 +77,14 @@ export default function RegCCD({setCcdProceed, items, setColorData}) {
                     <div className="card work" style={{ border: 'none', color: 'white', width: '100%' }}>
                         <div className="img-section" style={{ backgroundColor: colors[i] }} onClick={() => handleClick(i)}></div>
                         <div className="card-desc">
-                            <div className="card-header" style={{ padding: '0px', border: 'none', backgroundColor: 'transparent' }}>
+                            <div className="card-header" style={{ padding: '0px', border: 'none', backgroundColor: 'transparent'}}>
                                 <input
-                                    type="password"
+                                    type="text"
                                     className="card-title"
-                                    placeholder={inputs[i]}
+                                    value={inputs[i]}
                                     onChange={(e) => setValue(e, i)}
+                                    placeholder={i+1}
+                                    style={{textAlign:'center'}}
                                 />
                             </div>
                             <div className="card-time">{i + 1}</div>
