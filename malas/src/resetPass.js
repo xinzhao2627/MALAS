@@ -21,7 +21,7 @@ function ResetPass (){
   const [captchaAttempt, s_captchaAttempt] = useState(0)
   const [retrieved_OTP, s_retrieved_OTP] = useState(0)
   const [keytp, set_keytp] = useState('')
-  const [f_OTP, s_f_OTP] = useState(0)
+  const [f_OTP, s_f_OTP] = useState('')
   const retrieved_user = "testing@gmail.com"
   const pics = ['/images/captchaP/mooP.jpg', '/images/captchaP/iniP.jpg', '/images/captchaP/picP.jpg']
   const getPic = () => {return pics[Math.floor(Math.random() * pics.length)]}
@@ -46,14 +46,13 @@ function ResetPass (){
     setTransac_status(stat)
     e.preventDefault()
     const transac_type = 2
-    const ex = {user_name, elapsedTime, transac_status, transac_type}
+    const ex = {user_name, elapsedTime, stat, transac_type}
     const option  = {
       method: "POST",
       headers: {
         "Content-Type":"application/json"
       },
-      body: JSON.stringify(ex),
-      prompt_phase: prompt_phase
+      body: JSON.stringify(ex)
     }
     try{
       const response = await fetch("/uploadTransaction", option)
@@ -79,6 +78,25 @@ function ResetPass (){
 // phase 3 = otp (auto send in user)
 // phase 4 = ccd (retrieved in otp)
 // phase 5 = reset pass (also upload  in transaction)
+const ccdRetriever = async () => {
+  // retrieve the ccd from backend to here
+  const ex = {user_name}
+  const option  = {
+    method: "POST",
+    headers: {
+      "Content-Type":"application/json"
+    },
+    body: JSON.stringify(ex)
+  }
+  const response = await fetch("/retrieveccd", option)
+  const mes = await response.json()
+  alert(mes.message)
+
+  if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
+    setColorData(mes.colorData)
+    set_prompt_phase(4)
+  }
+}
   const offsetXRef = useRef(0);
   const bot_recognition = (
       <>  
@@ -102,9 +120,8 @@ function ResetPass (){
                   onVerify={(data) => {
                     if (data.x >= offsetXRef.current - 10 && data.x < offsetXRef.current + 10) {
                       setTimeout(() => {
-                        set_prompt_phase(2);
+                        ccdRetriever()
                       }, 1000);
-                      setIsPlaying(true)
                       return Promise.resolve();
                     }
 
@@ -144,29 +161,10 @@ function ResetPass (){
     }, 1000);
   };
   
-  const ccdRetriever = async (e) => {
-    // retrieve the ccd from backend to here
-    e.preventDefault()
-    const ex = {user_name}
-    const option  = {
-      method: "POST",
-      headers: {
-        "Content-Type":"application/json"
-      },
-      body: JSON.stringify(ex),
-      prompt_phase: prompt_phase
-    }
-    const response = await fetch("/retrieveccd", option)
-    const mes = await response.json()
-    alert(mes.message)
 
-    if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
-      setColorData(mes.colorData)
-      set_prompt_phase(4)
-    }
-  }
   
   const accSubmit = async (e) => {
+    if (prompt_phase === 1) {setIsPlaying(true)}
     if (user_name.includes("@gmail.com")){
       e.preventDefault()
 
@@ -181,8 +179,7 @@ function ResetPass (){
         headers: {
           "Content-Type":"application/json"
         },
-        body: JSON.stringify(ex),
-        prompt_phase: prompt_phase
+        body: JSON.stringify(ex)
       }
       try{
         const response = await fetch("/resetAccEmail", option)
@@ -193,8 +190,8 @@ function ResetPass (){
         if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
           // TODO
           s_retrieved_OTP(mes.code)
-          console.log(retrieved_OTP)
-          if (prompt_phase !== 3) set_prompt_phase(3)
+          console.log(mes.code)
+          if (prompt_phase !== 2) set_prompt_phase(2)
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -228,7 +225,7 @@ function ResetPass (){
   }
   const otpSubmit = (e) => {
     if (f_OTP === retrieved_OTP){
-      ccdRetriever(e)
+      set_prompt_phase(3)
     } else {
       alert('incorrect OTP')
     }
@@ -241,7 +238,7 @@ function ResetPass (){
       <span>{user_name}</span>
       <h3 className='login-header-label mt-3'> Enter code</h3>
       <span>We emailed the code to {user_name}. Please enter the code to sign-in</span>
-      <input className='login-header-input mt-3' type='number' value={f_OTP} onChange={handleOTPChange}/>
+      <input className='login-header-input mt-3' type='text' value={f_OTP} onChange={handleOTPChange}/>
       <div className='mt-4'>
           <span>Didn't received it? please wait for a few minutes and </span>
           <span className='link-primary' style={{cursor:(otpRetry) ? 'pointer' : 'not-allowed'}} onClick={accSubmit}>
@@ -291,8 +288,7 @@ function ResetPass (){
         headers: {
           "Content-Type":"application/json"
         },
-        body: JSON.stringify(ex),
-        prompt_phase: prompt_phase
+        body: JSON.stringify(ex)
       }
       const response = await fetch("/resetNewPass", option)
       const mes = await response.json()
@@ -321,7 +317,7 @@ function ResetPass (){
   const enter_password = (
     <>
       <div className='mt-4'>
-        <span >{retrieved_user}</span>
+        <span >{user_name}</span>
       </div>
       <h3 className='login-header-label mt-3'> Enter new password</h3>
       <input className='login-header-input mt-3' type='password' placeholder='Password' value={password}  onChange={handleChangePassword}/>
@@ -340,11 +336,11 @@ function ResetPass (){
             </NavLink>
           </div>
           { prompt_phase === 1
-              ? bot_recognition 
+              ? enter_account
             : prompt_phase === 2
-              ? enter_account 
-            : prompt_phase === 3
               ? enter_otp
+            : prompt_phase === 3
+              ? bot_recognition 
             : prompt_phase === 4
               ? enter_ccd 
             : prompt_phase === 5

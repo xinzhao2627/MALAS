@@ -20,7 +20,7 @@ function Login (){
   const [captchaAttempt, s_captchaAttempt] = useState(0)
   const [retrieved_OTP, s_retrieved_OTP] = useState(0)
   const [keytp, set_keytp] = useState('')
-  const [f_OTP, s_f_OTP] = useState(0)
+  const [f_OTP, s_f_OTP] = useState('')
   const pics = ['/images/captchaP/mooP.jpg', '/images/captchaP/iniP.jpg', '/images/captchaP/picP.jpg']
   const getPic = () => {return pics[Math.floor(Math.random() * pics.length)]}
   const [otpRetry, setOtpRetry] = useMomentaryBool(true, 30000)
@@ -42,6 +42,7 @@ function Login (){
     
     const transac_type = 1
     const ex = {user_name, elapsedTime, stat, transac_type}
+    console.log(ex)
     const option  = {
       method: "POST",
       headers: {
@@ -119,7 +120,7 @@ function Login (){
         </NavLink>
       </div>
       <div className='login-reg-prompt mt-3'>
-        <NavLink to='/login' className='link-primary'>
+        <NavLink to='/resetPass' className='link-primary'>
           Can't access account?
         </NavLink>
       </div>
@@ -253,7 +254,7 @@ function Login (){
 
     if (mes.proceed === true && (response.status === 200 || response.status === 201)) {
       s_retrieved_OTP(mes.code)
-      console.log(retrieved_OTP)
+      console.log(mes.code)
       set_prompt_phase(3.5)
     }
   }
@@ -263,7 +264,7 @@ function Login (){
   }
   const otpSubmit = (e) => {
     if (f_OTP === retrieved_OTP){
-      upload_transaction(e)
+      upload_transaction(true, e)
       alert('login complete, transaction uploaded')
       navigate('/')
     } else {
@@ -278,7 +279,7 @@ function Login (){
       <span>{user_name}</span>
       <h3 className='login-header-label mt-3'> Enter code</h3>
       <span>We emailed the code to {user_name}. Please enter the code to sign-in</span>
-      <input className='login-header-input mt-3' type='number' value={f_OTP} onChange={handleOTPChange}/>
+      <input className='login-header-input mt-3' type='text' value={f_OTP} onChange={handleOTPChange}/>
       <div className='mt-4'>
           <span>Didn't received it? please wait for a few minutes and </span>
           <span className='link-primary' style={{cursor:(otpRetry) ? 'pointer' : 'not-allowed'}} onClick={sendOTP}>

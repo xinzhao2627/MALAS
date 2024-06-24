@@ -176,7 +176,7 @@ def uploadTransaction():
         data = request.json
         
         t_email = data.get('user_name')
-        t_stat = data.get('transac_status')
+        t_stat = data.get('stat')
         t_elapsed = data.get('elapsedTime')
         t_type = data.get('transac_type')
         
@@ -199,7 +199,8 @@ def resetAccEmail():
         data = request.json 
         u = data.get("user_name")
         if not u: return jsonify(inv(s)), 400
-        rows = Query_pr("SELECT name from %s WHERE name = %s", (t, u))
+        query = f"SELECT user_email FROM {t} WHERE user_email = %s"
+        rows = Query_pr(query, (u,))
         if not rows: return jsonify(dne(s)), 400
         
         code = send_otp_to(u)
@@ -210,7 +211,7 @@ def resetAccEmail():
 
 @app.route('/resetNewPass', methods = ['POST'])    
 def resetNewPass():
-    t = "user" ; s = "sendOTP"
+    t = "user" ; s = "reset password"
     try:
         data = request.json 
         u = data.get("user_name") #P.S. must return user_email
@@ -218,11 +219,10 @@ def resetNewPass():
         
         
         if not u: return jsonify(inv(s)), 400
-        rows = Query_pr("SELECT user_email from %s WHERE user_email LIKE %s", (t, u))
+        query = f"SELECT user_email FROM {t} WHERE user_email = %s"
+        rows = Query_pr(query, (u,))
         if not rows: return jsonify(dne(s)), 400
         
-        # (DONE) CONVERT TODO: change user {u}'s password into the new one which is ps password {ps}
-
         change_password(u, ps)
         
         return jsonify(proc(s)),200
