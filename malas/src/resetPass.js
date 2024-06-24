@@ -70,7 +70,12 @@ function ResetPass (){
     }
   }
   const backSubmit = async (e) => {
-    upload_transaction(false, e)
+    if (prompt_phase === 1) {
+      window.location.reload()
+      // navigate('/')
+    }else{
+      upload_transaction(false, e)
+    }
   }
   
 // prompt phase 1 = bot recognition 

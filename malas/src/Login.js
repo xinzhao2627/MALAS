@@ -66,7 +66,12 @@ function Login (){
     }
   }
   const backSubmit = async (e) => {
-    upload_transaction(false, e)
+    if (prompt_phase === 1) {
+      window.location.reload()
+      // navigate('/')
+    }else{
+      upload_transaction(false, e)
+    }
   }
   
 // Prompt phase 1 = username

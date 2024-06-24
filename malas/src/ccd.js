@@ -92,6 +92,11 @@ export default function CCD({colorData, ccdProceed, setCcdProceed, items}) {
 
     return (
         <>
+            <div className="d-flex justify-content-center align-items-center m-3">
+                <button className="btn btn-primary" style={{width:'100px', height:'100%'}} onClick={handleSave}>
+                    Save
+                </button>
+            </div>
             <div className="container" style={{ width: '100%', height: (items === 3) ? '50vh' : '70vh' }}>
                 <div className="row d-flex justify-content-center align-items-center">
                     {pbn(items)}
@@ -114,11 +119,7 @@ export default function CCD({colorData, ccdProceed, setCcdProceed, items}) {
                     </div>
                 </div>
             }
-            <div className="d-flex justify-content-center align-items-center m-3">
-                <button className="btn btn-primary" style={{width:'100px', height:'100%'}} onClick={handleSave}>
-                    Save
-                </button>
-            </div>
+           
         </>
     );
 }
