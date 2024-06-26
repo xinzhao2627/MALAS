@@ -79,7 +79,7 @@ def add_transaction(t_email, t_elapse, t_stat, t_type):
     t_date = datetime.now()
     dt_string = t_date.strftime("%Y-%m-%d %H:%M:%S")
 
-    Query_pr("INSERT INTO `transaction`(`user_email`, `elapse_time`, `transac_status`, `transac_type`, `transaction_date`) VALUES ( %s, %s, %s, %s, %s)", (t_email, t_elapse, t_stat, t_type, dt_string))
+    Query_pr("INSERT INTO `transaction`(`user_email`, `elapse_time`, `transac_status`, `transaction_type_id`, `transaction_date`) VALUES ( %s, %s, %s, %s, %s)", (t_email, t_elapse, t_stat, t_type, dt_string))
 
 def change_password(user, new_password):
     Query_pr("UPDATE `user` SET `user_password`= %s WHERE `user_email` LIKE %s", (new_password, user))
